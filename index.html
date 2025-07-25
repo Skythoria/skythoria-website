@@ -7,20 +7,31 @@
   <title>Skythoria</title>
   <style>
     body { font-family: Arial, sans-serif; background: #111; color: #EEE; margin: 0; }
+    .banner { text-align: center; margin-top: 20px; }
+    .banner img { max-width: 100%; height: auto; border-radius: 8px; }
     header, section { max-width: 800px; margin: 20px auto; padding: 20px; background: #222; border-radius: 8px; }
-    h1, h2 { color: #FF3B3F; }
+    h1, h2 { color: #FF3B3F; margin-top: 0; }
     a.button { display: inline-block; padding: 10px 20px; background: #FF3B3F; color: #fff; text-decoration: none; border-radius: 4px; }
     ul { line-height: 1.5; }
+    #news ul, #mechanics ul { list-style: disc inside; }
     footer { text-align: center; padding: 20px; font-size: 0.8em; color: #666; }
   </style>
 </head>
 <body>
+
+  <!-- Banner -->
+  <div class="banner">
+    <img src="assets/banner.png" alt="Skythoria Banner" />
+  </div>
+
+  <!-- Hero / Join -->
   <header>
     <h1>Skythoria</h1>
     <p>Skyblock + MMO‑style leveling, custom caves & loot.</p>
     <a class="button" href="minecraft://skythoria.ooguy.com">Join Server</a>
   </header>
 
+  <!-- How to Join -->
   <section>
     <h2>How to Join</h2>
     <ul>
@@ -30,6 +41,29 @@
     </ul>
   </section>
 
+  <!-- Mechanics -->
+  <section id="mechanics">
+    <h2>Server Mechanics</h2>
+    <ul>
+      <li><strong>Custom Leveling:</strong> gain XP to unlock new abilities</li>
+      <li><strong>Mob Caves:</strong> challenge dungeons, fight bosses</li>
+      <li><strong>Economy & Shops:</strong> trade with NPCs & players</li>
+      <li><strong>Events:</strong> weekly contests, build‑offs, treasure hunts</li>
+    </ul>
+  </section>
+
+  <!-- News & Events -->
+  <section id="news">
+    <h2>News & Events</h2>
+    <ul>
+      <li><strong>Aug 1:</strong> Launching Skythoria Alpha v1.21.6!</li>
+      <li><strong>Aug 7:</strong> First Community Build‑Off—theme: Floating Castles</li>
+      <li><strong>Aug 14:</strong> Boss Rush Event: Defeat all custom bosses in under 10 minutes</li>
+      <!-- Add your own items here -->
+    </ul>
+  </section>
+
+  <!-- Existing Features -->
   <section>
     <h2>Features</h2>
     <ul>
@@ -40,18 +74,19 @@
     </ul>
   </section>
 
+  <!-- Community / Discord -->
   <section>
     <h2>Community</h2>
-    <!-- Discord widget embed -->
     <iframe
       src="https://discord.com/widget?id=1398252690546491392&theme=dark"
       width="350" height="500"
       allowtransparency="true"
       frameborder="0">
     </iframe>
-    <!-- Fallback invite button -->
     <p style="margin-top: 10px;">
-      <a class="button" href="https://discord.gg/NCtM5fMY" target="_blank">Join our Discord</a>
+      <a class="button" href="https://discord.gg/NCtM5fMY" target="_blank">
+        Join our Discord
+      </a>
     </p>
   </section>
 
