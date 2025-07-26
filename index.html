@@ -6,16 +6,101 @@
   <meta name="description" content="Skythoria: Skyblock + MMO‑style leveling, custom caves & loot." />
   <title>Skythoria</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #EEE; margin: 0; }
-    .banner { text-align: center; margin-top: 20px; }
-    .banner img { width: 100%; height: auto; border-radius: 8px; }
-    header, section { max-width: 800px; margin: 20px auto; padding: 20px; background: #222; border-radius: 8px; }
-    h1, h2 { color: #FF3B3F; margin-top: 0; }
-    a.button { display: inline-block; padding: 12px 24px; background: #FF3B3F; color: #fff; text-decoration: none; border-radius: 4px; font-size: 1.1em; }
-    ul { line-height: 1.5; }
-    code { background: #333; padding: 2px 4px; border-radius: 4px; color: #0f0; }
-    .join-discord p { margin: 8px 0; }
-    footer { text-align: center; padding: 20px; font-size: 0.8em; color: #666; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: #EEE;
+      margin: 0;
+    }
+    .banner {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .banner img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    header, section, .formatter {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #222;
+      border-radius: 8px;
+    }
+    h1, h2 {
+      color: #FF3B3F;
+      margin-top: 0;
+    }
+    a.button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #FF3B3F;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 1.1em;
+    }
+    code {
+      background: #333;
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #0f0;
+    }
+    .formatter textarea, .output {
+      width: 100%;
+      font-family: monospace;
+      font-size: 1em;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #444;
+      background: #111;
+      color: #EEE;
+      border-radius: 5px;
+      resize: vertical;
+    }
+    .formatter .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .formatter .buttons button {
+      flex: 1 0 auto;
+      padding: 6px 10px;
+      background: #333;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+    .formatter .buttons button:hover {
+      background: #555;
+    }
+    .formatter .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .preview {
+      margin-top: 15px;
+      padding: 10px;
+      background: #1a1a1a;
+      border-left: 4px solid #FF3B3F;
+      white-space: pre-wrap;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8em;
+      color: #666;
+    }
+    select, label, input[type="checkbox"] {
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -46,8 +131,138 @@
     </p>
   </section>
 
+  <!-- Formatter Tool -->
+  <section class="formatter">
+    <h2>Minecraft Text Formatter</h2>
+
+    <div class="controls">
+      <label>
+        Format Mode:
+        <select id="formatMode">
+          <option value="amp">Classic (&)</option>
+          <option value="mini">&lt;MiniMessage&gt;</option>
+        </select>
+      </label>
+      <label>
+        <input type="checkbox" id="brackets" checked /> Auto-color brackets
+      </label>
+      <button onclick="copyOutput()">Copy Output</button>
+    </div>
+
+    <textarea id="rawInput" spellcheck="true" rows="4" placeholder="Type your message here..."></textarea>
+
+    <div class="buttons" id="formatButtons"></div>
+
+    <div class="output" id="formattedOutput" readonly></div>
+    <div class="preview" id="previewText"></div>
+  </section>
+
   <footer>
     &copy; 2025 Skythoria
   </footer>
+
+  <script>
+    const colors = {
+      0: 'Black', 1: 'Dark Blue', 2: 'Dark Green', 3: 'Dark Aqua',
+      4: 'Dark Red', 5: 'Dark Purple', 6: 'Gold', 7: 'Gray',
+      8: 'Dark Gray', 9: 'Blue', a: 'Green', b: 'Aqua',
+      c: 'Red', d: 'Light Purple', e: 'Yellow', f: 'White'
+    };
+    const formats = {
+      l: 'Bold', o: 'Italic', n: 'Underline', m: 'Strikethrough', k: 'Magic', r: 'Reset'
+    };
+
+    const btns = document.getElementById('formatButtons');
+    const input = document.getElementById('rawInput');
+    const output = document.getElementById('formattedOutput');
+    const preview = document.getElementById('previewText');
+    const formatMode = document.getElementById('formatMode');
+    const bracketCheck = document.getElementById('brackets');
+
+    // Add color buttons
+    for (const code in colors) {
+      const btn = document.createElement('button');
+      btn.textContent = `&${code}`;
+      btn.style.background = `#${code}${code}${code}`;
+      btn.style.color = code === '0' ? '#fff' : '#000';
+      btn.title = colors[code];
+      btn.onclick = () => applyFormat(code, 'color');
+      btns.appendChild(btn);
+    }
+
+    // Add format buttons
+    for (const code in formats) {
+      const btn = document.createElement('button');
+      btn.textContent = `&${code}`;
+      btn.title = formats[code];
+      btn.onclick = () => applyFormat(code, 'style');
+      btns.appendChild(btn);
+    }
+
+    function applyFormat(code, type) {
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      const text = input.value;
+      const selected = text.slice(start, end);
+      const mode = formatMode.value;
+      const useBrackets = bracketCheck.checked;
+
+      let formatted = selected;
+
+      if (mode === 'amp') {
+        const prefix = type === 'color' ? `&${code}` : `&${code}`;
+        formatted = `${prefix}${selected}`;
+        if (useBrackets && selected.startsWith('[') && selected.endsWith(']'))
+          formatted = `${prefix}${selected[0]}&r${selected.slice(1, -1)}&r${selected[selected.length - 1]}`;
+      } else {
+        const tag = codeToMiniTag(code);
+        formatted = `<${tag}>${selected}</${tag}>`;
+      }
+
+      input.value = text.slice(0, start) + formatted + text.slice(end);
+      updateOutput();
+    }
+
+    function codeToMiniTag(code) {
+      const map = {
+        l: 'bold', o: 'italic', n: 'underlined', m: 'strikethrough',
+        k: 'obfuscated', r: 'reset'
+      };
+      if (map[code]) return map[code];
+      return {
+        '0': 'black', '1': 'dark_blue', '2': 'dark_green', '3': 'dark_aqua',
+        '4': 'dark_red', '5': 'dark_purple', '6': 'gold', '7': 'gray',
+        '8': 'dark_gray', '9': 'blue', 'a': 'green', 'b': 'aqua',
+        'c': 'red', 'd': 'light_purple', 'e': 'yellow', 'f': 'white'
+      }[code] || 'white';
+    }
+
+    function updateOutput() {
+      const raw = input.value;
+      const mode = formatMode.value;
+      output.textContent = raw;
+      preview.innerHTML = renderPreview(raw, mode);
+    }
+
+    function renderPreview(str, mode) {
+      if (mode === 'amp') {
+        return str.replace(/&([0-9a-fklmnor])/gi, (_, code) => {
+          const tag = codeToMiniTag(code.toLowerCase());
+          return `<span class="${tag}">`;
+        }).replace(/&r/gi, '</span>');
+      } else {
+        return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+    }
+
+    input.addEventListener('input', updateOutput);
+    formatMode.addEventListener('change', updateOutput);
+    updateOutput();
+
+    function copyOutput() {
+      navigator.clipboard.writeText(output.textContent)
+        .then(() => alert('Copied to clipboard!'));
+    }
+  </script>
 </body>
 </html>
