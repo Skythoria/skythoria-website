@@ -1,78 +1,52 @@
-@font-face {
-  font-family: 'Minecraft';
-  src: url('../fonts/Minecraftia.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
+
 body {
   background: #111;
-  color: #eee;
-  font-family: 'Minecraft', monospace;
+  color: #EEE;
+  font-family: Arial, sans-serif;
   margin: 0;
 }
-nav {
-  background: #222;
-  padding: 10px;
-  text-align: center;
+.banner img {
+  width: 100%;
+  max-width: 1506px;
+  display: block;
+  margin: 20px auto 0 auto;
+  border-radius: 8px;
 }
-nav a {
-  color: #fff;
-  margin: 0 12px;
-  text-decoration: none;
-}
-nav a.active {
-  font-weight: bold;
-  color: #FF3B3F;
-}
-.container {
-  max-width: 1000px;
+header, section, main {
+  max-width: 900px;
   margin: 20px auto;
   padding: 20px;
   background: #222;
   border-radius: 8px;
 }
-textarea {
-  width: 100%;
-  height: 100px;
-  background: #000;
-  color: #fff;
-  border: 1px solid #444;
-  padding: 10px;
-  font-family: 'Minecraft', monospace;
+h1, h2 {
+  color: #FF3B3F;
+  margin-top: 0;
+}
+code {
+  background: #333;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #0f0;
   font-size: 1.2em;
 }
-.button-grid {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+.tabs {
+  background: #1a1a1a;
+  padding: 12px;
+  text-align: center;
 }
-.button-grid button {
-  padding: 6px 12px;
-  font-size: 1em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.tabs a {
+  color: #eee;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
 }
-.preview-text {
-  background: #000;
-  color: #fff;
+.tabs a.active {
+  color: #FF3B3F;
+}
+footer {
+  text-align: center;
   padding: 20px;
-  margin-top: 20px;
-  font-family: 'Minecraft', monospace;
-  min-height: 60px;
-  white-space: pre-wrap;
-  border: 1px solid #444;
-}
-.bold { font-weight: bold; }
-.italic { font-style: italic; }
-.underline { text-decoration: underline; }
-.strike { text-decoration: line-through; }
-.magic {
-  animation: magictext 0.1s infinite alternate;
-  display: inline-block;
-}
-@keyframes magictext {
-  from { opacity: 0.6; }
-  to { opacity: 1; }
+  color: #666;
+  font-size: 0.9em;
 }

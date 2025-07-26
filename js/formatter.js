@@ -1,79 +1,62 @@
+
 const colors = {
-  0: '000000', 1: '0000AA', 2: '00AA00', 3: '00AAAA',
-  4: 'AA0000', 5: 'AA00AA', 6: 'FFAA00', 7: 'AAAAAA',
-  8: '555555', 9: '5555FF', a: '55FF55', b: '55FFFF',
-  c: 'FF5555', d: 'FF55FF', e: 'FFFF55', f: 'FFFFFF'
+  0:'000000',1:'0000AA',2:'00AA00',3:'00AAAA',
+  4:'AA0000',5:'AA00AA',6:'FFAA00',7:'AAAAAA',
+  8:'555555',9:'5555FF',a:'55FF55',b:'55FFFF',
+  c:'FF5555',d:'FF55FF',e:'FFFF55',f:'FFFFFF'
 };
 const formats = {
-  l: ['Bold', 'bold'], o: ['Italic', 'italic'], n: ['Underline', 'underline'],
-  m: ['Strike', 'strike'], k: ['Magic', 'magic'], r: ['Reset', 'reset']
+  l:['Bold','bold'],o:['Italic','italic'],n:['Underline','underline'],
+  m:['Strike','strike'],k:['Magic','magic'],r:['Reset','reset']
 };
 
 const input = document.getElementById('input');
 const preview = document.getElementById('preview');
 const buttons = document.getElementById('buttons');
 
+function wrapSelection(before, after) {
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  const selected = input.value.slice(start, end);
+  const result = before + selected + after;
+  input.setRangeText(result, start, end, 'end');
+  updatePreview();
+}
+
 for (const code in colors) {
   const btn = document.createElement('button');
   btn.textContent = `&${code}`;
-  btn.className = 'color';
   btn.style.background = `#${colors[code]}`;
-  btn.style.color = (parseInt(code, 16) < 5) ? '#fff' : '#000';
+  btn.style.color = '#000';
   btn.onclick = () => wrapSelection(`&${code}`, '&r');
   buttons.appendChild(btn);
 }
 for (const code in formats) {
-  const [label, className] = formats[code];
+  const [label] = formats[code];
   const btn = document.createElement('button');
   btn.textContent = label;
-  btn.className = className;
   btn.onclick = () => wrapSelection(`&${code}`, '&r');
   buttons.appendChild(btn);
-}
-
-function wrapSelection(before, after) {
-  const start = input.selectionStart;
-  const end = input.selectionEnd;
-  const value = input.value;
-  const selected = value.slice(start, end);
-  const result = before + selected + after;
-  input.value = value.slice(0, start) + result + value.slice(end);
-  updatePreview();
 }
 
 function updatePreview() {
   const text = input.value;
   let html = '';
+  let openTags = [];
   let i = 0;
   while (i < text.length) {
     if (text[i] === '&' && i + 1 < text.length) {
-      const code = text[i + 1].toLowerCase();
-      i += 2;
-      if (colors[code]) {
-        html += `<span style="color:#${colors[code]}">`;
-        continue;
-      }
-      if (code === 'l') { html += `<span class="bold">`; continue; }
-      if (code === 'o') { html += `<span class="italic">`; continue; }
-      if (code === 'n') { html += `<span class="underline">`; continue; }
-      if (code === 'm') { html += `<span class="strike">`; continue; }
-      if (code === 'k') { html += `<span class="magic">`; continue; }
-      if (code === 'r') { html += `</span>`; continue; }
+      const code = text[++i].toLowerCase();
+      if (colors[code]) { html += `<span style="color:#${colors[code]}">`; openTags.push('</span>'); }
+      else if (formats[code]) { html += `<span class="${formats[code][1]}">`; openTags.push('</span>'); }
+      else if (code === 'r') { while (openTags.length) html += openTags.pop(); }
     } else {
       html += text[i];
-      i++;
     }
+    i++;
   }
-  html += '</span>';
+  while (openTags.length) html += openTags.pop();
   preview.innerHTML = html;
 }
-
 input.addEventListener('input', updatePreview);
 updatePreview();
-
-setInterval(() => {
-  const magic = document.querySelectorAll('.magic');
-  magic.forEach(el => {
-    el.textContent = el.textContent.split('').map(() => String.fromCharCode(33 + Math.random() * 94)).join('');
-  });
-}, 100);

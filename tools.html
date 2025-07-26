@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Text Formatter - Skythoria</title>
   <link rel="stylesheet" href="css/style.css">
-  <script defer src="js/formatter.js"></script>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="how-to.html">How to Play</a>
-    <a href="tools.html" class="active">Tools</a>
-    <a href="discord.html">Discord</a>
-  </nav>
 
-  <main class="container">
-    <h1>Text Formatter</h1>
-    <p>This tool lets you apply Minecraft-style color and formatting codes using <code>&</code> codes.</p>
-    <p>Select any part of your text below and click a color or format button to apply it. The result will appear in the preview as it would in-game.</p>
+<nav class="tabs">
+  <a href="index.html">Home</a>
+  <a href="how-to.html">How to Play</a>
+  <a href="tools.html" class="active">Tools</a>
+  <a href="discord.html">Discord</a>
+</nav>
 
-    <textarea id="input" placeholder="Type your Minecraft message here..."></textarea>
-    <div id="buttons" class="button-grid"></div>
-    <h2>Preview:</h2>
-    <div id="preview" class="preview-text"></div>
-  </main>
+<main>
+  <h2>Text Formatter</h2>
+  <p>Type your text below, select part of it, then click a formatting or color button to apply. Use <code>&</code> formatting (e.g. &cRed &lBold &r).</p>
+  <textarea id="input" placeholder="Type Minecraft text here..."></textarea>
+  <div id="buttons" class="button-grid"></div>
+  <div id="preview" class="preview-text">Preview will appear here...</div>
+</main>
+
+<script src="js/formatter.js"></script>
 </body>
 </html>
