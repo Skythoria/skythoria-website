@@ -23,10 +23,10 @@ for (const code in colors) {
   buttons.appendChild(btn);
 }
 for (const code in formats) {
-  const [label] = formats[code];
+  const [label, className] = formats[code];
   const btn = document.createElement('button');
   btn.textContent = label;
-  btn.className = code;
+  btn.className = className;
   btn.onclick = () => wrapSelection(`&${code}`, '&r');
   buttons.appendChild(btn);
 }
@@ -45,29 +45,27 @@ function updatePreview() {
   const text = input.value;
   let html = '';
   let i = 0;
-  let currentStyles = '';
   while (i < text.length) {
     if (text[i] === '&' && i + 1 < text.length) {
       const code = text[i + 1].toLowerCase();
       i += 2;
       if (colors[code]) {
-        currentStyles = `color: #${colors[code]}; font-weight: normal; font-style: normal; text-decoration: none; animation: none;`;
-        html += `<span style="${currentStyles}">`;
+        html += `<span style="color:#${colors[code]}">`;
         continue;
       }
-      if (code === 'l') html += `<span style="font-weight:bold;">`;
-      else if (code === 'o') html += `<span style="font-style:italic;">`;
-      else if (code === 'n') html += `<span style="text-decoration:underline;">`;
-      else if (code === 'm') html += `<span style="text-decoration:line-through;">`;
-      else if (code === 'k') html += `<span class="magic">`;
-      else if (code === 'r') html += `</span>`;
-      continue;
+      if (code === 'l') { html += `<span class="bold">`; continue; }
+      if (code === 'o') { html += `<span class="italic">`; continue; }
+      if (code === 'n') { html += `<span class="underline">`; continue; }
+      if (code === 'm') { html += `<span class="strike">`; continue; }
+      if (code === 'k') { html += `<span class="magic">`; continue; }
+      if (code === 'r') { html += `</span>`; continue; }
     } else {
       html += text[i];
       i++;
     }
   }
-  preview.innerHTML = html + '</span>';
+  html += '</span>';
+  preview.innerHTML = html;
 }
 
 input.addEventListener('input', updatePreview);

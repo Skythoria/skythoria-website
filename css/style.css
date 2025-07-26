@@ -1,15 +1,77 @@
-body {
-  background: #111; color: #eee; font-family: Arial, sans-serif; margin: 0;
+@font-face {
+  font-family: 'Minecraft';
+  src: url('../fonts/Minecraftia.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
-nav { background: #222; padding: 10px; text-align: center; }
-nav a { color: #fff; margin: 0 10px; text-decoration: none; }
-nav a.active { font-weight: bold; color: #FF3B3F; }
-.container { max-width: 1000px; margin: 20px auto; padding: 20px; background: #222; border-radius: 8px; }
-textarea { width: 100%; height: 100px; background: #000; color: #fff; border: 1px solid #444; padding: 10px; font-family: monospace; font-size: 1.1em; }
-.button-grid { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
-.button-grid button { padding: 6px 12px; font-size: 0.9em; border: none; border-radius: 4px; cursor: pointer; }
-.preview-text { background: #000; color: #fff; padding: 20px; margin-top: 20px; font-family: monospace; min-height: 60px; white-space: pre-wrap; border: 1px solid #444; }
-.magic { animation: magictext 0.1s infinite alternate; display: inline-block; }
+body {
+  background: #111;
+  color: #eee;
+  font-family: 'Minecraft', monospace;
+  margin: 0;
+}
+nav {
+  background: #222;
+  padding: 10px;
+  text-align: center;
+}
+nav a {
+  color: #fff;
+  margin: 0 12px;
+  text-decoration: none;
+}
+nav a.active {
+  font-weight: bold;
+  color: #FF3B3F;
+}
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #222;
+  border-radius: 8px;
+}
+textarea {
+  width: 100%;
+  height: 100px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 10px;
+  font-family: 'Minecraft', monospace;
+  font-size: 1.2em;
+}
+.button-grid {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.button-grid button {
+  padding: 6px 12px;
+  font-size: 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.preview-text {
+  background: #000;
+  color: #fff;
+  padding: 20px;
+  margin-top: 20px;
+  font-family: 'Minecraft', monospace;
+  min-height: 60px;
+  white-space: pre-wrap;
+  border: 1px solid #444;
+}
+.bold { font-weight: bold; }
+.italic { font-style: italic; }
+.underline { text-decoration: underline; }
+.strike { text-decoration: line-through; }
+.magic {
+  animation: magictext 0.1s infinite alternate;
+  display: inline-block;
+}
 @keyframes magictext {
   from { opacity: 0.6; }
   to { opacity: 1; }
