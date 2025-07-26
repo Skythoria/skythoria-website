@@ -5,25 +5,28 @@ const colors = {
   c: 'FF5555', d: 'FF55FF', e: 'FFFF55', f: 'FFFFFF'
 };
 const formats = {
-  l: ['Bold'], o: ['Italic'], n: ['Underline'],
-  m: ['Strike'], k: ['Magic'], r: ['Reset']
+  l: ['Bold', 'bold'], o: ['Italic', 'italic'], n: ['Underline', 'underline'],
+  m: ['Strike', 'strike'], k: ['Magic', 'magic'], r: ['Reset', 'reset']
 };
+
 const input = document.getElementById('input');
-const output = document.getElementById('output');
 const preview = document.getElementById('preview');
 const buttons = document.getElementById('buttons');
 
 for (const code in colors) {
   const btn = document.createElement('button');
   btn.textContent = `&${code}`;
+  btn.className = 'color';
   btn.style.background = `#${colors[code]}`;
-  btn.style.color = parseInt(code, 16) < 5 ? '#fff' : '#000';
+  btn.style.color = (parseInt(code, 16) < 5) ? '#fff' : '#000';
   btn.onclick = () => wrapSelection(`&${code}`, '&r');
   buttons.appendChild(btn);
 }
 for (const code in formats) {
+  const [label] = formats[code];
   const btn = document.createElement('button');
-  btn.textContent = formats[code][0];
+  btn.textContent = label;
+  btn.className = code;
   btn.onclick = () => wrapSelection(`&${code}`, '&r');
   buttons.appendChild(btn);
 }
@@ -31,39 +34,48 @@ for (const code in formats) {
 function wrapSelection(before, after) {
   const start = input.selectionStart;
   const end = input.selectionEnd;
-  const selected = input.value.slice(start, end);
+  const value = input.value;
+  const selected = value.slice(start, end);
   const result = before + selected + after;
-  input.value = input.value.slice(0, start) + result + input.value.slice(end);
+  input.value = value.slice(0, start) + result + value.slice(end);
   updatePreview();
 }
 
 function updatePreview() {
   const text = input.value;
-  output.textContent = text;
   let html = '';
   let i = 0;
+  let currentStyles = '';
   while (i < text.length) {
     if (text[i] === '&' && i + 1 < text.length) {
       const code = text[i + 1].toLowerCase();
       i += 2;
       if (colors[code]) {
-        html += `<span style="color:#${colors[code]}">`;
+        currentStyles = `color: #${colors[code]}; font-weight: normal; font-style: normal; text-decoration: none; animation: none;`;
+        html += `<span style="${currentStyles}">`;
         continue;
       }
-      if (code === 'l') { html += '<b>'; continue; }
-      if (code === 'o') { html += '<i>'; continue; }
-      if (code === 'n') { html += '<u>'; continue; }
-      if (code === 'm') { html += '<s>'; continue; }
-      if (code === 'r') { html += '</span></b></i></u></s>'; continue; }
+      if (code === 'l') html += `<span style="font-weight:bold;">`;
+      else if (code === 'o') html += `<span style="font-style:italic;">`;
+      else if (code === 'n') html += `<span style="text-decoration:underline;">`;
+      else if (code === 'm') html += `<span style="text-decoration:line-through;">`;
+      else if (code === 'k') html += `<span class="magic">`;
+      else if (code === 'r') html += `</span>`;
+      continue;
     } else {
-      html += text[i++];
+      html += text[i];
+      i++;
     }
   }
-  html += '</span></b></i></u></s>';
-  preview.innerHTML = html;
+  preview.innerHTML = html + '</span>';
 }
 
-function copyText() {
-  navigator.clipboard.writeText(output.textContent)
-    .then(() => alert('Copied to clipboard!'));
-}
+input.addEventListener('input', updatePreview);
+updatePreview();
+
+setInterval(() => {
+  const magic = document.querySelectorAll('.magic');
+  magic.forEach(el => {
+    el.textContent = el.textContent.split('').map(() => String.fromCharCode(33 + Math.random() * 94)).join('');
+  });
+}, 100);

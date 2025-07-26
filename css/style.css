@@ -1,62 +1,16 @@
 body {
-  background: #111;
-  color: #EEE;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  background: #111; color: #eee; font-family: Arial, sans-serif; margin: 0;
 }
-nav {
-  background: #1a1a1a;
-  padding: 10px;
-  text-align: center;
-}
-nav a {
-  margin: 0 15px;
-  color: #FF3B3F;
-  text-decoration: none;
-  font-weight: bold;
-}
-nav a:hover {
-  text-decoration: underline;
-}
-.banner img {
-  width: 100%;
-  max-height: 423px;
-  object-fit: cover;
-}
-main {
-  max-width: 1500px;
-  margin: auto;
-  padding: 20px;
-}
-textarea {
-  width: 100%;
-  background: #222;
-  color: #fff;
-  padding: 10px;
-  border: 1px solid #444;
-}
-#buttons button {
-  margin: 4px;
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-}
-.preview {
-  background: #000;
-  padding: 10px;
-  min-height: 40px;
-}
-pre {
-  background: #000;
-  color: #0f0;
-  padding: 10px;
-  overflow-x: auto;
-}
-footer {
-  text-align: center;
-  padding: 20px;
-  font-size: 0.8em;
-  color: #888;
+nav { background: #222; padding: 10px; text-align: center; }
+nav a { color: #fff; margin: 0 10px; text-decoration: none; }
+nav a.active { font-weight: bold; color: #FF3B3F; }
+.container { max-width: 1000px; margin: 20px auto; padding: 20px; background: #222; border-radius: 8px; }
+textarea { width: 100%; height: 100px; background: #000; color: #fff; border: 1px solid #444; padding: 10px; font-family: monospace; font-size: 1.1em; }
+.button-grid { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+.button-grid button { padding: 6px 12px; font-size: 0.9em; border: none; border-radius: 4px; cursor: pointer; }
+.preview-text { background: #000; color: #fff; padding: 20px; margin-top: 20px; font-family: monospace; min-height: 60px; white-space: pre-wrap; border: 1px solid #444; }
+.magic { animation: magictext 0.1s infinite alternate; display: inline-block; }
+@keyframes magictext {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
 }
