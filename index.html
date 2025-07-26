@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Skythoria: Skyblock + MMO‑style leveling, custom caves & loot." />
   <title>Skythoria</title>
-  <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet" />
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -81,7 +80,7 @@
     .formatter .buttons .format.italic { font-style: italic; }
     .formatter .buttons .format.underline { text-decoration: underline; }
     .formatter .buttons .format.strike { text-decoration: line-through; }
-    .formatter .buttons .format.magic { font-family: monospace; letter-spacing: 3px; }
+    .formatter .buttons .format.magic { letter-spacing: 3px; }
     .formatter .buttons .format.reset { color: #fff; background: #444; }
 
     .formatter .controls {
@@ -91,21 +90,24 @@
       flex-wrap: wrap;
       margin: 10px 0;
     }
+
     .preview {
       margin-top: 15px;
       padding: 10px;
-      font-family: 'Minecraft', monospace;
+      font-family: 'Courier New', monospace;
       font-size: 1.1em;
       background: #1a1a1a;
       border-left: 4px solid #FF3B3F;
       white-space: pre-wrap;
     }
+
     footer {
       text-align: center;
       padding: 20px;
       font-size: 0.8em;
       color: #666;
     }
+
     select, label {
       margin-right: 10px;
     }
@@ -188,7 +190,6 @@
     const preview = document.getElementById('previewText');
     const formatMode = document.getElementById('formatMode');
 
-    // Add color buttons
     for (const code in colors) {
       const btn = document.createElement('button');
       btn.textContent = `&${code}`;
@@ -199,10 +200,9 @@
       btns.appendChild(btn);
     }
 
-    // Add format buttons
     for (const code in formats) {
-      const btn = document.createElement('button');
       const [label, className] = formats[code];
+      const btn = document.createElement('button');
       btn.textContent = label;
       btn.className = `format ${className}`;
       btn.onclick = () => applyFormat(code, 'style');
@@ -215,12 +215,11 @@
       const text = input.value;
       const selected = text.slice(start, end);
       const mode = formatMode.value;
-
       let formatted = selected;
 
       if (mode === 'amp') {
         const prefix = `&${code}`;
-        formatted = `${prefix}${selected}`;
+        formatted = `${prefix}${selected}&r`;
       } else {
         const tag = codeToMiniTag(code);
         formatted = `<${tag}>${selected}</${tag}>`;
@@ -249,23 +248,16 @@
 
       if (mode === 'amp') {
         let html = raw;
-        html = html.replace(/&([0-9a-frkolmn])/gi, (_, code) => {
-          const tag = code.toLowerCase();
-          if (colors[tag]) {
-            return `</span><span style="color:#${colors[tag]}">`;
-          }
-          if (tag === 'l') return '<span style="font-weight:bold">';
-          if (tag === 'o') return '<span style="font-style:italic">';
-          if (tag === 'n') return '<span style="text-decoration:underline">';
-          if (tag === 'm') return '<span style="text-decoration:line-through">';
-          if (tag === 'k') return '<span style="animation: obf 1s infinite;">';
-          if (tag === 'r') return '</span>';
-          return '';
-        });
-        html += '</span>';
-        preview.innerHTML = html;
+        html = html
+          .replace(/&([0-9a-f])/gi, (_, c) => `</span><span style="color:#${colors[c.toLowerCase()]};">`)
+          .replace(/&l/gi, '<span style="font-weight:bold;">')
+          .replace(/&o/gi, '<span style="font-style:italic;">')
+          .replace(/&n/gi, '<span style="text-decoration:underline;">')
+          .replace(/&m/gi, '<span style="text-decoration:line-through;">')
+          .replace(/&r/gi, '</span>');
+        preview.innerHTML = html + '</span>';
       } else {
-        preview.textContent = raw; // show MiniMessage raw if in mini mode
+        preview.textContent = raw;
       }
     }
 
