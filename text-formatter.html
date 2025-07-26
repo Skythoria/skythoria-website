@@ -10,11 +10,13 @@
       font-family: 'Minecraft';
       src: url('https://cdn.jsdelivr.net/gh/IdreesInc/Minecraft-Font@master/MinecraftRegular.woff') format('woff');
     }
+
     @keyframes obf-anim {
       0% { opacity: 1; transform: scale(1) rotate(0deg); }
       50% { opacity: 0.6; transform: scale(1.05) rotate(1deg); }
       100% { opacity: 1; transform: scale(1) rotate(-1deg); }
     }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #111;
@@ -22,16 +24,38 @@
       margin: 0;
       padding: 0;
     }
+
+    .nav {
+      background: #1b1b1b;
+      padding: 12px 20px;
+      text-align: center;
+      border-bottom: 2px solid #FF3B3F;
+    }
+
+    .nav a {
+      color: #FF3B3F;
+      text-decoration: none;
+      margin: 0 18px;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .nav a:hover {
+      text-decoration: underline;
+    }
+
     .container {
       max-width: 1400px;
       margin: 0 auto;
       padding: 20px;
     }
+
     h1 {
       font-family: 'Minecraft', monospace;
       color: #FF3B3F;
       margin-bottom: 10px;
     }
+
     .instructions {
       background: #222;
       padding: 10px;
@@ -39,12 +63,14 @@
       border-radius: 4px;
       margin-bottom: 15px;
     }
+
     .buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-bottom: 10px;
     }
+
     .buttons button {
       padding: 6px 12px;
       font-size: 0.9em;
@@ -53,9 +79,11 @@
       cursor: pointer;
       font-weight: bold;
     }
+
     .buttons .color {
       color: #000;
     }
+
     .buttons .bold { font-weight: bold; }
     .buttons .italic { font-style: italic; }
     .buttons .underline { text-decoration: underline; }
@@ -65,6 +93,7 @@
       background: #555;
       color: #fff;
     }
+
     textarea {
       width: 100%;
       padding: 10px;
@@ -76,12 +105,14 @@
       resize: vertical;
       margin-bottom: 15px;
     }
+
     .output {
       white-space: pre-wrap;
       font-family: monospace;
       color: #0f0;
       margin-bottom: 10px;
     }
+
     .preview {
       padding: 10px;
       background: #1a1a1a;
@@ -90,14 +121,17 @@
       font-size: 1.2em;
       white-space: pre-wrap;
     }
+
     .obf {
       display: inline-block;
       animation: obf-anim 0.8s infinite alternate;
     }
+
     .bold {
       font-weight: bold;
       font-size: 1.25em;
     }
+
     footer {
       text-align: center;
       color: #666;
@@ -108,6 +142,14 @@
   </style>
 </head>
 <body>
+
+  <!-- NAV BAR -->
+  <div class="nav">
+    <a href="/">Home</a>
+    <a href="/text-formatter.html">Tools</a>
+    <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a>
+  </div>
+
   <div class="container">
     <h1>Minecraft Text Formatter</h1>
 
