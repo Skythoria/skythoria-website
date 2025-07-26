@@ -6,21 +6,23 @@
   <meta name="description" content="Skythoria: Skyblock + MMO‑style leveling, custom caves & loot." />
   <title>Skythoria</title>
   <style>
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('https://cdn.jsdelivr.net/gh/IdreesInc/Minecraft-Font@master/MinecraftRegular.woff') format('woff');
+    }
+    @keyframes obf-anim {
+      0% { opacity: 1; transform: scale(1) rotate(0deg); }
+      50% { opacity: 0.6; transform: scale(1.05) rotate(1deg); }
+      100% { opacity: 1; transform: scale(1) rotate(-1deg); }
+    }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #111;
       color: #EEE;
       margin: 0;
     }
-    .banner {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .banner img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
+    .banner { text-align: center; margin-top: 20px; }
+    .banner img { width: 100%; height: auto; border-radius: 8px; }
     header, section, .formatter {
       max-width: 1500px;
       margin: 20px auto;
@@ -28,10 +30,7 @@
       background: #222;
       border-radius: 8px;
     }
-    h1, h2 {
-      color: #FF3B3F;
-      margin-top: 0;
-    }
+    h1, h2 { color: #FF3B3F; margin-top: 0; }
     a.button {
       display: inline-block;
       padding: 12px 24px;
@@ -59,13 +58,13 @@
       border-radius: 5px;
       resize: vertical;
     }
-    .formatter .buttons {
+    .buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 10px;
     }
-    .formatter .buttons button {
+    .buttons button {
       padding: 6px 12px;
       border: none;
       border-radius: 4px;
@@ -73,32 +72,29 @@
       font-weight: bold;
       font-size: 0.9em;
     }
-    .formatter .buttons .color {
+    .buttons .color {
       color: #000;
     }
-    .formatter .buttons .format.bold { font-weight: bold; }
-    .formatter .buttons .format.italic { font-style: italic; }
-    .formatter .buttons .format.underline { text-decoration: underline; }
-    .formatter .buttons .format.strike { text-decoration: line-through; }
-    .formatter .buttons .format.magic { letter-spacing: 3px; }
-    .formatter .buttons .format.reset { color: #fff; background: #444; }
-
-    .formatter .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin: 10px 0;
-    }
+    .buttons .bold { font-weight: bold; }
+    .buttons .italic { font-style: italic; }
+    .buttons .underline { text-decoration: underline; }
+    .buttons .strike { text-decoration: line-through; }
+    .buttons .magic { letter-spacing: 2px; }
+    .buttons .reset { background: #444; color: #fff; }
 
     .preview {
       margin-top: 15px;
       padding: 10px;
-      font-family: 'Courier New', monospace;
+      font-family: 'Minecraft', monospace;
       font-size: 1.1em;
       background: #1a1a1a;
       border-left: 4px solid #FF3B3F;
       white-space: pre-wrap;
+    }
+
+    .obf {
+      display: inline-block;
+      animation: obf-anim 0.8s infinite alternate;
     }
 
     footer {
@@ -107,168 +103,138 @@
       font-size: 0.8em;
       color: #666;
     }
-
-    select, label {
-      margin-right: 10px;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Banner -->
-  <div class="banner">
-    <img src="assets/banner.png" alt="Skythoria Banner" />
-  </div>
+<div class="banner">
+  <img src="assets/banner.png" alt="Skythoria Banner" />
+</div>
 
-  <!-- Hero / Join -->
-  <header>
-    <h1>Welcome to Skythoria</h1>
-    <h2>How To Join the Skythoria Server:</h2>
-    <a class="button" href="minecraft://skythoria.ooguy.com:25565">Play Now</a>
-    <p style="margin-top:8px; color:#ccc;">
-      Enter <code>skythoria.ooguy.com</code> (Java Edition 1.21.6)<br/>
-      If that button doesn’t work, copy‑paste the address.
-    </p>
-  </header>
+<header>
+  <h1>Welcome to Skythoria</h1>
+  <h2>How To Join the Skythoria Server:</h2>
+  <a class="button" href="minecraft://skythoria.ooguy.com:25565">Play Now</a>
+  <p style="margin-top:8px; color:#ccc;">
+    Enter <code>skythoria.ooguy.com</code> (Java Edition 1.21.6)<br/>
+    If that button doesn’t work, copy‑paste the address.
+  </p>
+</header>
 
-  <!-- Community / Discord -->
-  <section>
-    <h2>Community</h2>
-    <a class="button" href="https://discord.gg/NCtM5fMY" target="_blank">Join our Discord</a>
-    <p style="margin-top:8px;">
-      Click above to join our Discord community.<br/>
-      Once inside, read <strong>#rules</strong> and react to gain full access.
-    </p>
-  </section>
+<section>
+  <h2>Community</h2>
+  <a class="button" href="https://discord.gg/NCtM5fMY" target="_blank">Join our Discord</a>
+  <p style="margin-top:8px;">
+    Click above to join our Discord community.<br/>
+    Once inside, read <strong>#rules</strong> and react to gain full access.
+  </p>
+</section>
 
-  <!-- Formatter Tool -->
-  <section class="formatter">
-    <h2>Minecraft Text Formatter</h2>
+<section class="formatter">
+  <h2>Minecraft Text Formatter</h2>
 
-    <div class="controls">
-      <label>
-        Format Mode:
-        <select id="formatMode">
-          <option value="amp">Classic (&)</option>
-          <option value="mini">&lt;MiniMessage&gt;</option>
-        </select>
-      </label>
-      <button onclick="copyOutput()">Copy Output</button>
-    </div>
+  <div class="buttons" id="buttons"></div>
 
-    <textarea id="rawInput" spellcheck="true" rows="4" placeholder="Type your message here..."></textarea>
+  <textarea id="input" rows="4" placeholder="Type your message here..." spellcheck="true"></textarea>
+  <div class="output" id="output"></div>
+  <div class="preview" id="preview"></div>
+  <button onclick="copyText()">Copy Output</button>
+</section>
 
-    <div class="buttons" id="formatButtons"></div>
+<footer>
+  &copy; 2025 Skythoria
+</footer>
 
-    <div class="output" id="formattedOutput" readonly></div>
-    <div class="preview" id="previewText"></div>
-  </section>
+<script>
+  const colors = {
+    0: '000000', 1: '0000AA', 2: '00AA00', 3: '00AAAA',
+    4: 'AA0000', 5: 'AA00AA', 6: 'FFAA00', 7: 'AAAAAA',
+    8: '555555', 9: '5555FF', a: '55FF55', b: '55FFFF',
+    c: 'FF5555', d: 'FF55FF', e: 'FFFF55', f: 'FFFFFF'
+  };
+  const formats = {
+    l: ['Bold', 'bold'],
+    o: ['Italic', 'italic'],
+    n: ['Underline', 'underline'],
+    m: ['Strike', 'strike'],
+    k: ['Magic', 'magic'],
+    r: ['Reset', 'reset']
+  };
 
-  <footer>
-    &copy; 2025 Skythoria
-  </footer>
+  const input = document.getElementById('input');
+  const output = document.getElementById('output');
+  const preview = document.getElementById('preview');
+  const buttons = document.getElementById('buttons');
 
-  <script>
-    const colors = {
-      0: '000000', 1: '0000AA', 2: '00AA00', 3: '00AAAA',
-      4: 'AA0000', 5: 'AA00AA', 6: 'FFAA00', 7: 'AAAAAA',
-      8: '555555', 9: '5555FF', a: '55FF55', b: '55FFFF',
-      c: 'FF5555', d: 'FF55FF', e: 'FFFF55', f: 'FFFFFF'
-    };
-    const formats = {
-      l: ['Bold', 'bold'],
-      o: ['Italic', 'italic'],
-      n: ['Underline', 'underline'],
-      m: ['Strike', 'strike'],
-      k: ['Magic', 'magic'],
-      r: ['Reset', 'reset']
-    };
+  for (const code in colors) {
+    const btn = document.createElement('button');
+    btn.textContent = `&${code}`;
+    btn.className = 'color';
+    btn.style.background = `#${colors[code]}`;
+    btn.style.color = (parseInt(code, 16) < 5) ? '#fff' : '#000';
+    btn.onclick = () => wrapSelection(`&${code}`, '&r');
+    buttons.appendChild(btn);
+  }
 
-    const btns = document.getElementById('formatButtons');
-    const input = document.getElementById('rawInput');
-    const output = document.getElementById('formattedOutput');
-    const preview = document.getElementById('previewText');
-    const formatMode = document.getElementById('formatMode');
+  for (const code in formats) {
+    const [label, className] = formats[code];
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.className = className;
+    btn.onclick = () => wrapSelection(`&${code}`, '&r');
+    buttons.appendChild(btn);
+  }
 
-    for (const code in colors) {
-      const btn = document.createElement('button');
-      btn.textContent = `&${code}`;
-      btn.className = 'color';
-      btn.style.background = `#${colors[code]}`;
-      btn.style.color = (code === '0' || code === '4' || code === '5') ? '#fff' : '#000';
-      btn.onclick = () => applyFormat(code, 'color');
-      btns.appendChild(btn);
-    }
+  function wrapSelection(before, after) {
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const value = input.value;
+    const selected = value.slice(start, end);
+    const result = before + selected + after;
+    input.value = value.slice(0, start) + result + value.slice(end);
+    updatePreview();
+  }
 
-    for (const code in formats) {
-      const [label, className] = formats[code];
-      const btn = document.createElement('button');
-      btn.textContent = label;
-      btn.className = `format ${className}`;
-      btn.onclick = () => applyFormat(code, 'style');
-      btns.appendChild(btn);
-    }
+  function updatePreview() {
+    const text = input.value;
+    output.textContent = text;
+    let html = '';
+    let openTags = [];
+    let i = 0;
 
-    function applyFormat(code, type) {
-      const start = input.selectionStart;
-      const end = input.selectionEnd;
-      const text = input.value;
-      const selected = text.slice(start, end);
-      const mode = formatMode.value;
-      let formatted = selected;
+    while (i < text.length) {
+      if (text[i] === '&' && i + 1 < text.length) {
+        const code = text[i + 1].toLowerCase();
+        i += 2;
 
-      if (mode === 'amp') {
-        const prefix = `&${code}`;
-        formatted = `${prefix}${selected}&r`;
+        if (colors[code]) {
+          html += `</span><span style="color:#${colors[code]}">`;
+          continue;
+        }
+        if (code === 'l') { html += `<span style="font-weight:bold;">`; continue; }
+        if (code === 'o') { html += `<span style="font-style:italic;">`; continue; }
+        if (code === 'n') { html += `<span style="text-decoration:underline;">`; continue; }
+        if (code === 'm') { html += `<span style="text-decoration:line-through;">`; continue; }
+        if (code === 'k') { html += `<span class="obf">`; continue; }
+        if (code === 'r') { html += `</span>`; continue; }
+        html += text[i - 2];
+        i--;
       } else {
-        const tag = codeToMiniTag(code);
-        formatted = `<${tag}>${selected}</${tag}>`;
-      }
-
-      input.value = text.slice(0, start) + formatted + text.slice(end);
-      updateOutput();
-    }
-
-    function codeToMiniTag(code) {
-      const tags = {
-        l: 'bold', o: 'italic', n: 'underlined', m: 'strikethrough',
-        k: 'obfuscated', r: 'reset',
-        '0': 'black', '1': 'dark_blue', '2': 'dark_green', '3': 'dark_aqua',
-        '4': 'dark_red', '5': 'dark_purple', '6': 'gold', '7': 'gray',
-        '8': 'dark_gray', '9': 'blue', 'a': 'green', 'b': 'aqua',
-        'c': 'red', 'd': 'light_purple', 'e': 'yellow', 'f': 'white'
-      };
-      return tags[code] || 'white';
-    }
-
-    function updateOutput() {
-      const raw = input.value;
-      const mode = formatMode.value;
-      output.textContent = raw;
-
-      if (mode === 'amp') {
-        let html = raw;
-        html = html
-          .replace(/&([0-9a-f])/gi, (_, c) => `</span><span style="color:#${colors[c.toLowerCase()]};">`)
-          .replace(/&l/gi, '<span style="font-weight:bold;">')
-          .replace(/&o/gi, '<span style="font-style:italic;">')
-          .replace(/&n/gi, '<span style="text-decoration:underline;">')
-          .replace(/&m/gi, '<span style="text-decoration:line-through;">')
-          .replace(/&r/gi, '</span>');
-        preview.innerHTML = html + '</span>';
-      } else {
-        preview.textContent = raw;
+        html += text[i];
+        i++;
       }
     }
+    html += '</span>';
+    preview.innerHTML = html;
+  }
 
-    input.addEventListener('input', updateOutput);
-    formatMode.addEventListener('change', updateOutput);
-    updateOutput();
+  function copyText() {
+    navigator.clipboard.writeText(output.textContent)
+      .then(() => alert('Copied to clipboard!'));
+  }
 
-    function copyOutput() {
-      navigator.clipboard.writeText(output.textContent)
-        .then(() => alert('Copied to clipboard!'));
-    }
-  </script>
+  input.addEventListener('input', updatePreview);
+  updatePreview();
+</script>
 </body>
 </html>
