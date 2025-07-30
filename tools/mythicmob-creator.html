@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="MythicMob Creator Tool for Skythoria" />
+  <title>Skythoria MythicMob Creator</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #111;
+      color: #ccc;
+      font-family: 'Minecraft', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #222;
+      padding: 1rem 2rem;
+      color: #fff;
+      font-size: 1.5rem;
+      border-bottom: 2px solid #b00;
+    }
+
+    nav {
+      background-color: #1a1a1a;
+      padding: 0.5rem 2rem;
+    }
+
+    nav a {
+      color: #eee;
+      text-decoration: none;
+      margin-right: 1.5rem;
+    }
+
+    nav a:hover {
+      color: #f00;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #f44;
+    }
+
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    footer {
+      padding: 1rem 2rem;
+      color: #666;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid #333;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>Skythoria Tools</header>
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/how-to-join.html">How to Join</a>
+    <a href="/tools/text-formatter.html">Text Formatter</a>
+    <a href="/tools/mythicmob-creator.html"><strong>MythicMob Creator</strong></a>
+  </nav>
+
+  <main class="container">
+    <h1>MythicMob Creator</h1>
+    <p>Create MythicMobs visually with this tool. Export the result as valid YAML to paste into your server.</p>
+<form id="mobForm">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MythicMob Creator v4</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>MythicMob Creator <span style="color:#ff5555;">v4</span></h1>
+
+    <section>
+      <h2>General Info</h2>
+      <label>Mob Internal Name:<input type="text" id="mobName" placeholder="ExampleName" /></span></label>
+      <label>Display Name:<input type="text" id="displayName" placeholder="&aExample Mob Name" /></span></label>
+      <label>Entity Type:
+        <select id="entityType">
+          <option value="SKELETON">SKELETON</option>
+          <option value="ZOMBIE">ZOMBIE</option>
+          <option value="CREEPER">CREEPER</option>
+          <option value="SLIME">SLIME</option>
+          <option value="SPIDER">SPIDER</option>
+          <option value="CAVE_SPIDER">CAVE_SPIDER</option>
+          <option value="PILLAGER">PILLAGER</option>
+          <option value="BEE">BEE</option>
+          <option value="DOLPHIN">DOLPHIN</option>
+          <option value="FOX">FOX</option>
+          <option value="BAT">BAT</option>
+          <option value="GOAT">GOAT</option>
+          <option value="IRON_GOLEM">IRON_GOLEM</option>
+          <option value="CHICKEN">CHICKEN</option>
+          <option value="COW">COW</option>
+        </select>
+      </span></label>
+      <label>Health:<input type="number" id="health" value="20" /></span></label>
+      <label>Damage:<input type="number" id="damage" value="2" /></span></label>
+    </section>
+
+    <section>
+      <h2>Mob Options</h2>
+      <div class="options-list">
+        <label><input type="checkbox" id="AlwaysShowName" /> <strong>AlwaysShowName</strong> – Show nameplate</label>
+        <label><input type="checkbox" id="Glowing" /> <strong>Glowing</strong> – Outline through walls</label>
+        <label><input type="checkbox" id="Invisible" /> <strong>Invisible</strong> – Hide mob model</label>
+        <label><input type="checkbox" id="Silent" /> <strong>Silent</strong> – Mute mob</label>
+        <label><input type="checkbox" id="Despawn" checked /> <strong>Despawn</strong> – Can despawn</label>
+        <label><input type="checkbox" id="TargetNearest" checked /> <strong>TargetNearest</strong> – AI targets nearby</label>
+        <label>Scale: <input type="number" id="Scale" value="1" step="0.1" /></span></label>
+        <label>MovementSpeed: <input type="number" id="MovementSpeed" value="0.25" step="0.01" /></span></label>
+        <label>AttackCooldown: <input type="number" id="AttackCooldown" value="450" /></span></label>
+        <label>AttackKnockback: <input type="number" id="AttackKnockback" value="3.0" step="0.1" /></span></label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Equipment</h2>
+      <label>HAND: <input type="text" id="equip_hand" placeholder="IRON_SWORD" /></span></label>
+      <label>OFFHAND: <input type="text" id="equip_offhand" placeholder="BONE" /></span></label>
+      <label>HEAD: <input type="text" id="equip_head" placeholder="IRON_HELMET" /></span></label>
+      <label>CHEST: <input type="text" id="equip_chest" placeholder="IRON_CHESTPLATE" /></span></label>
+      <label>LEGS: <input type="text" id="equip_legs" placeholder="IRON_LEGGINGS" /></span></label>
+      <label>FEET: <input type="text" id="equip_feet" placeholder="IRON_BOOTS" /></span></label>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <label>Add Skill Template:
+        <select id="skillTemplates" onchange="addSkillTemplate()">
+          <option value="">-- Select a Skill --</option>
+          <option value='- speak{m="Hello <target.name>"} @Self ~onTimer:100'>Speak</option>
+          <option value='- throw{velocity=10;velocityY=5} @PlayersInRadius{r=5} ~onAttack'>Throw</option>
+          <option value='- sound{s=entity.witch.celebrate;v=1.2;p=1.5} @Self ~onAttack'>Sound</option>
+          <option value='- effect:particles{p=crit;amount=50;speed=0.2} @Self ~onAttack'>Effect</option>
+          <option value='- potion{type=BLINDNESS;duration=60;level=1} @Target ~onAttack'>Potion</option>
+        </select>
+      </span></label>
+      <textarea id="skills" rows="6" placeholder="- speak{m=\"Hello\"} @Self ~onTimer:100"></textarea>
+    </section>
+
+    <section>
+      <h2>Drops</h2>
+      <textarea id="drops" rows="4" placeholder="- BONE 1to4 0.4\n- SkeletonKey 1 0.01"></textarea>
+      <label>XP Drop Min: <input type="number" id="xpMin" value="5" /></span></label>
+      <label>XP Drop Max: <input type="number" id="xpMax" value="10" /></span></label>
+    </section>
+
+    <button onclick="generateYAML()">Generate YAML</button>
+
+    <section>
+      <h2>YAML Output</h2>
+      <textarea id="yamlOutput" rows="30" readonly></textarea>
+    </section>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+</form></main>
+<footer>Skythoria &copy; 2025</footer>
+</body>
+</html>
