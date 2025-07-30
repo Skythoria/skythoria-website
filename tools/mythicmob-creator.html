@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="MythicMob Creator Tool for Skythoria" />
+  <title>Skythoria MythicMob Creator</title>
+  <style>
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('https://cdn.jsdelivr.net/gh/IdreesInc/Minecraft-Font@master/MinecraftRegular.woff') format('woff');
+    }
+
+    body {
+      background-color: #111;
+      color: #ccc;
+      font-family: 'Minecraft', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav {
+      background: #1b1b1b;
+      padding: 12px 20px;
+      text-align: center;
+      border-bottom: 2px solid #FF3B3F;
+    }
+
+    .nav a {
+      color: #FF3B3F;
+      text-decoration: none;
+      margin: 0 18px;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .nav a:hover {
+      text-decoration: underline;
+    }
+
+    .banner {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .banner img {
+      width: 100%;
+      height: auto;
+      border-radius: 0;
+    }
+
+    main {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #FF3B3F;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 5px;
+      margin-top: 4px;
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      font-family: monospace;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .options-list label {
+      display: block;
+      margin: 6px 0;
+    }
+
+    button {
+      background: #FF3B3F;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 15px;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background: #cc2a2f;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+      border-top: 1px solid #333;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav">
+    <a href="/index.html">Home</a>
+    <a href="/tools/text-formatter.html">Tools</a>
+    <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a>
+  </div>
+
+  <div class="banner">
+    <img src="/assets/banner.png" alt="Skythoria Banner" />
+  </div>
+
+  <main>
+    <h1>MythicMob Creator</h1>
+    <p>Fill out the options below to generate your MythicMob YAML config.</p>
+
+    <form id="mobForm">
+      <h2>General</h2>
+      <label>Internal Name:<input id="mobName" placeholder="ExampleMob" /></label>
+      <label>Display Name:<input id="displayName" placeholder="&aExample Mob Name" /></label>
+      <label>Type:
+        <select id="entityType">
+          <option>SKELETON</option><option>ZOMBIE</option><option>SPIDER</option><option>SLIME</option>
+          <option>IRON_GOLEM</option><option>CHICKEN</option><option>CREEPER</option><option>COW</option>
+          <option>PILLAGER</option><option>FOX</option><option>GOAT</option><option>BEE</option>
+        </select>
+      </label>
+      <label>Health:<input id="health" type="number" value="20" /></label>
+      <label>Damage:<input id="damage" type="number" value="3" /></label>
+
+      <h2>Options</h2>
+      <div class="options-list">
+        <label><input type="checkbox" id="AlwaysShowName" /> AlwaysShowName – Show nameplate</label>
+        <label><input type="checkbox" id="Glowing" /> Glowing – Outline through walls</label>
+        <label><input type="checkbox" id="Invisible" /> Invisible – Hide mob model</label>
+        <label><input type="checkbox" id="Silent" /> Silent – Mute mob</label>
+        <label><input type="checkbox" id="Despawn" checked /> Despawn – Can despawn</label>
+        <label><input type="checkbox" id="TargetNearest" checked /> TargetNearest – AI targets nearby</label>
+        <label>Scale:<input type="number" id="Scale" value="1" step="0.1" /></label>
+      </div>
+
+      <h2>Equipment</h2>
+      <label>HAND:<input id="equip_hand" placeholder="IRON_SWORD" /></label>
+      <label>OFFHAND:<input id="equip_offhand" placeholder="BONE" /></label>
+      <label>HEAD:<input id="equip_head" placeholder="IRON_HELMET" /></label>
+      <label>CHEST:<input id="equip_chest" placeholder="IRON_CHESTPLATE" /></label>
+      <label>LEGS:<input id="equip_legs" placeholder="IRON_LEGGINGS" /></label>
+      <label>FEET:<input id="equip_feet" placeholder="IRON_BOOTS" /></label>
+
+      <h2>Skills</h2>
+      <label>Add Template:
+        <select id="skillTemplates" onchange="addSkillTemplate()">
+          <option value="">-- Select a Skill --</option>
+          <option value='- speak{m="Hello <target.name>"} @Self ~onTimer:100'>Speak</option>
+          <option value='- throw{velocity=10;velocityY=5} @PlayersInRadius{r=5} ~onAttack'>Throw</option>
+          <option value='- sound{s=entity.witch.celebrate;v=1.2;p=1.5} @Self ~onAttack'>Sound</option>
+          <option value='- effect:particles{p=crit;amount=50;speed=0.2} @Self ~onAttack'>Effect</option>
+          <option value='- potion{type=BLINDNESS;duration=60;level=1} @Target ~onAttack'>Potion</option>
+        </select>
+      </label>
+      <textarea id="skills" rows="6" placeholder="- speak{m=&quot;Hello&quot;} @Self ~onTimer:100"></textarea>
+
+      <h2>Drops</h2>
+      <textarea id="drops" rows="3" placeholder="- BONE 1to3 0.3"></textarea>
+      <label>XP Min: <input type="number" id="xpMin" value="5" /></label>
+      <label>XP Max: <input type="number" id="xpMax" value="10" /></label>
+
+      <button type="button" onclick="generateYAML()">Generate YAML</button>
+
+      <h2>YAML Output</h2>
+      <textarea id="yamlOutput" rows="24" readonly></textarea>
+    </form>
+  </main>
+
+  <footer>Skythoria &copy; 2025</footer>
+
+  <script>
+    function addSkillTemplate() {
+      const select = document.getElementById('skillTemplates');
+      const value = select.value;
+      if (value) {
+        const skills = document.getElementById('skills');
+        skills.value += (skills.value ? '\n' : '') + value;
+        select.selectedIndex = 0;
+      }
+    }
+
+    function generateYAML() {
+      const get = id => document.getElementById(id).value;
+      const check = id => document.getElementById(id).checked;
+      const yaml = [];
+
+      const name = get('mobName') || 'ExampleMob';
+      yaml.push(`${name}:`);
+      yaml.push(`  Type: ${get('entityType')}`);
+      yaml.push(`  Display: "${get('displayName') || '&aExample Mob Name'}"`);
+      yaml.push(`  Health: ${get('health')}`);
+      yaml.push(`  Damage: ${get('damage')}`);
+      yaml.push(`  Options:`);
+
+      if (check('AlwaysShowName')) yaml.push(`    AlwaysShowName: true`);
+      if (check('Glowing')) yaml.push(`    Glowing: true`);
+      if (check('Invisible')) yaml.push(`    Invisible: true`);
+      if (check('Silent')) yaml.push(`    Silent: true`);
+      if (check('Despawn')) yaml.push(`    Despawn: true`);
+      if (check('TargetNearest')) yaml.push(`    TargetNearest: true`);
+      if (get('Scale')) yaml.push(`    Scale: ${get('Scale')}`);
+
+      yaml.push(`  Equipment:`);
+      if (get('equip_hand')) yaml.push(`    HAND: ${get('equip_hand')}`);
+      if (get('equip_offhand')) yaml.push(`    OFFHAND: ${get('equip_offhand')}`);
+      if (get('equip_head')) yaml.push(`    HEAD: ${get('equip_head')}`);
+      if (get('equip_chest')) yaml.push(`    CHEST: ${get('equip_chest')}`);
+      if (get('equip_legs')) yaml.push(`    LEGS: ${get('equip_legs')}`);
+      if (get('equip_feet')) yaml.push(`    FEET: ${get('equip_feet')}`);
+
+      const skills = get('skills').trim();
+      if (skills) {
+        yaml.push(`  Skills:`);
+        skills.split('\n').forEach(line => yaml.push(`    ${line}`));
+      }
+
+      const drops = get('drops').trim();
+      if (drops) {
+        yaml.push(`  Drops:`);
+        drops.split('\n').forEach(line => yaml.push(`    ${line}`));
+      }
+
+      yaml.push(`  Experience:`);
+      yaml.push(`    Min: ${get('xpMin')}`);
+      yaml.push(`    Max: ${get('xpMax')}`);
+
+      document.getElementById('yamlOutput').value = yaml.join('\n');
+    }
+  </script>
+</body>
+</html>
