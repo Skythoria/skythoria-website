@@ -39,12 +39,15 @@
     .banner {
       text-align: center;
       margin-top: 20px;
+      position: relative;
     }
 
     .banner img {
       width: 100%;
       height: auto;
       border-radius: 8px;
+      transition: opacity 1s ease-in-out;
+      opacity: 1;
     }
 
     header, section {
@@ -120,16 +123,16 @@
 </div>
 
 <div class="banner">
-  <img src="assets/banner.png" alt="Skythoria Banner" />
+  <img id="rotating-banner" src="assets/banners/banner1.png" alt="Skythoria Banner" />
 </div>
 
 <section class="news">
   <h2>News & Updates</h2>
   <ul>
-    <li><strong>[CURRENT STATUS]:</strong> [ONLINE] Whitelist/invite-only (pre-alpha phase/ ONLY DOWN FOR UPDATES OR MAINTENANCE) </li>
-    <li><strong>July 30 2025:</strong> Server fully online and playable, setting up common areas. Creating hunting caves, shops and quests.</li>
-    <li><strong>July 28 2025:</strong> Added custom npcs, custom mobs, player npc shops, trade system, protections and other goodies.</li>
-    <li><strong>July 18 2025:</strong> Server hub begins construction.</li>
+    <li><strong>STATUS:</strong> Whitelist/invite-only (pre-alpha phase)</li>
+    <li><strong>July 30:</strong> Server fully online and playable, setting up common areas. Creating hunting caves, shops and quests.</li>
+    <li><strong>July 28:</strong> Added custom npcs, custom mobs, player npc shops, trade system, protections and other goodies.</li>
+    <li><strong>July 26:</strong> Server begins construction.</li>
   </ul>
 </section>
 
@@ -172,6 +175,26 @@
 <footer>
   &copy; 2025 Skythoria
 </footer>
+
+<script>
+  const bannerImages = [
+    'assets/banners/banner1.png',
+    'assets/banners/banner2.gif',
+    'assets/banners/banner3.png'
+  ];
+
+  let currentBanner = 0;
+  const bannerEl = document.getElementById('rotating-banner');
+
+  setInterval(() => {
+    bannerEl.style.opacity = 0;
+    setTimeout(() => {
+      currentBanner = (currentBanner + 1) % bannerImages.length;
+      bannerEl.src = bannerImages[currentBanner];
+      bannerEl.style.opacity = 1;
+    }, 1000);
+  }, 5000);
+</script>
 
 </body>
 </html>
