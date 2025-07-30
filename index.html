@@ -39,15 +39,13 @@
     .banner {
       text-align: center;
       margin-top: 20px;
-      position: relative;
     }
 
     .banner img {
       width: 100%;
       height: auto;
       border-radius: 8px;
-      transition: opacity 1s ease-in-out;
-      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
     }
 
     header, section {
@@ -123,7 +121,7 @@
 </div>
 
 <div class="banner">
-  <img id="rotating-banner" src="assets/banners/banner1.png" alt="Skythoria Banner" />
+  <img id="banner-rotator" src="assets/banners/banner1.png" alt="Skythoria Banner" />
 </div>
 
 <section class="news">
@@ -131,7 +129,7 @@
   <ul>
     <li><strong>STATUS:</strong> Whitelist/invite-only (pre-alpha phase)</li>
     <li><strong>July 30:</strong> Server fully online and playable, setting up common areas. Creating hunting caves, shops and quests.</li>
-    <li><strong>July 28:</strong> Added custom npcs, custom mobs, player npc shops, trade system, protections and other goodies.</li>
+    <li><strong>July 28:</strong> Added custom NPCs, mobs, player shops, trade system, protections and more.</li>
     <li><strong>July 26:</strong> Server begins construction.</li>
   </ul>
 </section>
@@ -177,23 +175,29 @@
 </footer>
 
 <script>
-  const bannerImages = [
-    'assets/banners/banner1.png',
-    'assets/banners/banner2.gif',
-    'assets/banners/banner3.png'
+  const bannerFolder = 'assets/banners/';
+  const banners = [
+    'banner.png',
+    'banner1.png',
+    'banner2.png',
+    'banner3.png',
+    'banner4.png'
   ];
+  let index = 0;
+  const bannerImg = document.getElementById('banner-rotator');
 
-  let currentBanner = 0;
-  const bannerEl = document.getElementById('rotating-banner');
-
-  setInterval(() => {
-    bannerEl.style.opacity = 0;
+  function fadeBanner() {
+    bannerImg.style.opacity = 0;
     setTimeout(() => {
-      currentBanner = (currentBanner + 1) % bannerImages.length;
-      bannerEl.src = bannerImages[currentBanner];
-      bannerEl.style.opacity = 1;
-    }, 1000);
-  }, 5000);
+      index = (index + 1) % banners.length;
+      bannerImg.src = bannerFolder + banners[index];
+      bannerImg.onload = () => {
+        bannerImg.style.opacity = 1;
+      };
+    }, 500);
+  }
+
+  setInterval(fadeBanner, 5000);
 </script>
 
 </body>
