@@ -1,1 +1,154 @@
-<!-- Placeholder homepage -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skythoria - Home</title>
+  <meta name="description" content="Welcome to Skythoria Minecraft Server" />
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body {
+      background: #111;
+      color: #ddd;
+      font-family: 'Minecraft', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav {
+      background: #1b1b1b;
+      padding: 12px 20px;
+      text-align: center;
+      border-bottom: 2px solid #FF3B3F;
+    }
+
+    .nav a {
+      color: #FF3B3F;
+      text-decoration: none;
+      margin: 0 18px;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .nav a:hover {
+      text-decoration: underline;
+    }
+
+    .banner {
+      width: 100%;
+      max-height: 430px;
+      overflow: hidden;
+    }
+
+    .banner img {
+      width: 100%;
+      height: auto;
+      display: none;
+    }
+
+    .banner img.active {
+      display: block;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    h1, h2 {
+      color: #FF3B3F;
+    }
+
+    .howto img {
+      width: 100%;
+      margin: 12px 0;
+      border: 1px solid #444;
+    }
+
+    .discord-button {
+      display: inline-block;
+      background: #5865F2;
+      color: #fff;
+      padding: 12px 20px;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .discord-button:hover {
+      background: #4752C4;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 0.9em;
+      border-top: 1px solid #333;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="/index.html"><strong>Home</strong></a>
+    <a href="/tools/index.html">Tools</a>
+    <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a>
+  </div>
+
+  <div class="banner" id="banner-rotator">
+    <img src="/banners/banner1.png" class="active" alt="Banner 1" />
+    <img src="/banners/banner2.png" alt="Banner 2" />
+    <img src="/banners/banner3.gif" alt="Banner 3" />
+    <!-- Add more banners to /banners and duplicate <img> if needed -->
+  </div>
+
+  <main>
+    <section>
+      <h1>Welcome to Skythoria</h1>
+      <p>Custom Skyblock with powerful mobs, events, and an amazing community. Join today!</p>
+    </section>
+
+    <section id="news">
+      <h2>News & Updates</h2>
+      <p><strong>[Jul 30, 2025]</strong> Website structure rebuilt. MythicMob Creator & Text Formatter tools now live under Tools tab.</p>
+      <!-- You can edit or add more announcements here -->
+    </section>
+
+    <section class="howto">
+      <h2>How to Join</h2>
+      <p>Install Minecraft Java Edition version <strong>1.21.6</strong>, then add the server:</p>
+      <img src="/assets/install_correct.png" alt="Install Java" />
+      <img src="/assets/create_install.png" alt="Create Installation" />
+      <img src="/assets/small_version.png" alt="Select Version" />
+      <p>Then connect using this IP:</p>
+      <img src="/assets/add_server.png" alt="Add Server" />
+      <p>Server IP: <strong>skythoria.ooguy.com</strong></p>
+    </section>
+
+    <section>
+      <a href="https://discord.gg/NCtM5fMY" class="discord-button" target="_blank">Join Our Discord</a>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Skythoria. All Rights Reserved.
+  </footer>
+
+  <script>
+    const banners = document.querySelectorAll('#banner-rotator img');
+    let index = 0;
+    setInterval(() => {
+      banners[index].classList.remove('active');
+      index = (index + 1) % banners.length;
+      banners[index].classList.add('active');
+    }, 5000);
+  </script>
+</body>
+</html>
