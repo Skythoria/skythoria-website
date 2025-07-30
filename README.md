@@ -1,3 +1,0 @@
-# Skythoria Website
-
-Documentation placeholder.
