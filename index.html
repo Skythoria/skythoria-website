@@ -3,151 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Skythoria Minecraft Server Homepage" />
+  <meta name="description" content="Welcome to Skythoria – Minecraft Skyblock MMO Server" />
   <title>Skythoria - Home</title>
-  <link rel="stylesheet" href="tools/style.css" />
-  <style>
-    body {
-      background-color: #111;
-      color: #eee;
-      font-family: 'Minecraft', monospace;
-      margin: 0;
-    }
-
-    .nav {
-      background: #1b1b1b;
-      padding: 12px 20px;
-      text-align: center;
-      border-bottom: 2px solid #FF3B3F;
-    }
-
-    .nav a {
-      color: #FF3B3F;
-      text-decoration: none;
-      margin: 0 18px;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-
-    .nav a:hover {
-      text-decoration: underline;
-    }
-
-    .banner {
-      width: 100%;
-      max-height: 425px;
-      overflow: hidden;
-    }
-
-    .banner img {
-      width: 100%;
-      height: auto;
-      display: none;
-      object-fit: cover;
-    }
-
-    .banner img.active {
-      display: block;
-      animation: fadein 1s ease-in-out;
-    }
-
-    @keyframes fadein {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .section {
-      max-width: 1024px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .section h2 {
-      color: #FF3B3F;
-      margin-top: 1rem;
-    }
-
-    .discord-button {
-      display: inline-block;
-      padding: 10px 18px;
-      background-color: #5865F2;
-      color: #fff;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
-
-    .discord-button:hover {
-      background-color: #4752C4;
-    }
-
-    footer {
-      padding: 20px;
-      text-align: center;
-      font-size: 0.9em;
-      color: #666;
-      border-top: 1px solid #333;
-      margin-top: 3rem;
-    }
-
-    .news-item {
-      background: #1a1a1a;
-      padding: 12px;
-      margin-bottom: 16px;
-      border-left: 4px solid #FF3B3F;
-    }
-
-    .news-item img {
-      max-width: 100%;
-      margin-top: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="/tools/style.css" />
+  <script defer src="/tools/script.js"></script>
 </head>
 <body>
-
-  <div class="nav">
-    <a href="/skythoria-website/index.html">Home</a>
-    <a href="/skythoria-website/tools/index.html">Tools</a>
-    <a href="/skythoria-website/how-to-join.html">How to Join</a>
+  <nav>
+    <a href="/index.html"><strong>Home</strong></a>
+    <a href="/how-to-join.html">How to Join</a>
+    <a href="/tools/index.html">Tools</a>
     <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a>
+  </nav>
+
+  <div class="banner-rotator">
+    <img id="banner" src="/assets/banner.png" alt="Skythoria Banner" />
   </div>
 
-  <div class="banner">
-    <img src="/skythoria-website/banners/banner1.png" class="active" />
-    <img src="/skythoria-website/banners/banner2.png" />
-    <img src="/skythoria-website/banners/banner3.gif" />
-  </div>
+  <main class="container">
+    <h1>Welcome to Skythoria</h1>
+    <p class="motd" id="motd-box">
+      🌟 <strong>News:</strong> Server now supports 1.21.6! Join using <code>skythoria.ooguy.com</code>
+    </p>
 
-  <div class="section">
-    <h2>News & Updates</h2>
+    <section>
+      <h2>About Skythoria</h2>
+      <p>Skythoria is a custom Skyblock MMO-style Minecraft server with bosses, custom mobs, crates, leveling systems, and more. Join now for a unique experience!</p>
+    </section>
 
-    <div class="news-item">
-      <strong>🧙 Mage Staff Added!</strong>
-      <p>New magical items are being added to the Skythoria world. Try the new MythicMob creator tool in the Tools tab.</p>
-    </div>
+    <section>
+      <h2>Getting Started</h2>
+      <p>Follow the <a href="/how-to-join.html">How to Join</a> guide to get connected. We recommend Java 1.21.6.</p>
+    </section>
 
-    <div class="news-item">
-      <strong>🎉 Welcome to Skythoria</strong>
-      <p>We’ve launched our new website and added new tools for players and admins!</p>
-    </div>
+    <section>
+      <h2>Stay Connected</h2>
+      <p>
+        Join our <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a> for announcements, support, and community events.
+      </p>
+    </section>
+  </main>
 
-    <a class="discord-button" href="https://discord.gg/NCtM5fMY" target="_blank">Join Our Discord</a>
-  </div>
-
-  <footer>
-    Skythoria &copy; 2025 – Powered by OOGUY Hosting
-  </footer>
-
-  <script>
-    const banners = document.querySelectorAll(".banner img");
-    let index = 0;
-
-    setInterval(() => {
-      banners[index].classList.remove("active");
-      index = (index + 1) % banners.length;
-      banners[index].classList.add("active");
-    }, 5000);
-  </script>
+  <footer>Skythoria &copy; 2025</footer>
 </body>
 </html>
