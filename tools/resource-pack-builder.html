@@ -1,232 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Resource Pack Builder v1 | Skythoria Tools</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #111;
-      color: #EEE;
-      margin: 0;
-    }
-    .nav {
-      background: #1b1b1b;
-      padding: 10px 20px;
-      text-align: center;
-      border-bottom: 2px solid #FF3B3F;
-    }
-    .nav a {
-      color: #FF3B3F;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-    }
-    .nav a:hover {
-      text-decoration: underline;
-    }
-    header, section {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 20px;
-      background: #222;
-      border-radius: 8px;
-    }
-    h1, h2 {
-      color: #FF3B3F;
-      font-family: monospace;
-      margin-top: 0;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input[type="text"], input[type="file"] {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      background: #2d2d2d;
-      color: #EEE;
-      border: 1px solid #444;
-      border-radius: 4px;
-    }
-    button, .copy-btn {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #FF3B3F;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    .copy-btn {
-      display: inline-block;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-    .give-preview {
-      width: 100%;
-      padding: 8px;
-      background: #2d2d2d;
-      color: #0f0;
-      border-radius: 4px;
-      margin-top: 5px;
-      word-break: break-word;
-    }
-    .mode-toggle {
-      margin-top: 10px;
-      font-size: 0.9em;
-      color: #ccc;
-    }
-    .mode-toggle a {
-      color: #FF3B3F;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Skythoria Resource Pack Builder (String ID)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #121212;
+            color: white;
+            padding: 20px;
+        }
+        input, select, button, textarea {
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+            background: #1e1e1e;
+            color: white;
+            border: 1px solid #444;
+        }
+        button {
+            background: #b22222;
+            border: none;
+            cursor: pointer;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        .output {
+            background: #1e1e1e;
+            padding: 10px;
+            border: 1px solid #444;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
-  <div class="nav">
-    <a href="/">Home</a>
-    <a href="/tools/index.html">Tools</a>
-    <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a>
-  </div>
+    <h1>Skythoria Resource Pack Builder</h1>
+    <p>This tool generates a resource pack using string-based <code>custom_model_data</code> entries for Minecraft 1.21.6+ (singleplayer only).</p>
 
-  <section>
-    <h1>Resource Pack Builder</h1>
-    <p>This tool creates a working Minecraft 1.21.6+ resource pack using a model and texture exported from Blockbench.</p>
+    <label for="packname">Pack Name</label>
+    <input type="text" id="packname" placeholder="e.g., SkythoriaCustomPack">
 
-    <label>Pack Name:</label>
-    <input type="text" id="packName" placeholder="SkythoriaPack">
+    <label for="itemid">Custom Model ID (string)</label>
+    <input type="text" id="itemid" placeholder="e.g., bonestaff">
 
-    <label>Custom Model ID:</label>
-    <input type="text" id="itemId" placeholder="Example: 4 or bonestaff">
+    <label for="baseitem">Base Item (vanilla Minecraft item)</label>
+    <input type="text" id="baseitem" placeholder="e.g., bone">
 
-    <label>Base Item to Override:</label>
-    <input type="text" id="baseItem" placeholder="stick, sword, etc.">
+    <label for="modelfile">Model JSON File (.json)</label>
+    <input type="file" id="modelfile" accept=".json">
 
-    <div class="mode-toggle">
-      Format: <strong id="modeLabel">Integer ID</strong> |
-      <a onclick="toggleMode()">Switch to String ID</a>
-    </div>
+    <label for="texturefile">Texture PNG File (.png)</label>
+    <input type="file" id="texturefile" accept=".png">
 
-    <label>Model File (.json):</label>
-    <input type="file" id="modelFile" accept=".json">
+    <button onclick="generatePack()">Generate Pack (.zip)</button>
 
-    <label>Texture File (.png):</label>
-    <input type="file" id="textureFile" accept=".png">
+    <h3>Give Command</h3>
+    <input type="text" id="givecommand" readonly>
 
-    <button id="generatePack">Generate Resource Pack</button>
+    <script>
+        async function generatePack() {
+            const packName = document.getElementById('packname').value.trim();
+            const itemId = document.getElementById('itemid').value.trim();
+            const baseItem = document.getElementById('baseitem').value.trim();
+            const modelFile = document.getElementById('modelfile').files[0];
+            const textureFile = document.getElementById('texturefile').files[0];
 
-    <label>Give Command:</label>
-    <div>
-      <span class="give-preview" id="giveCommand"></span>
-      <button class="copy-btn" onclick="copyGive()">Copy</button>
-    </div>
+            if (!packName || !itemId || !baseItem || !modelFile || !textureFile) {
+                alert("Fill in all fields and select both files.");
+                return;
+            }
 
-    <label>Download:</label>
-    <a id="downloadLink" class="button" style="display:none;">Download Pack</a>
-  </section>
+            const JSZip = await import("https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm");
+            const zip = new JSZip.default();
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script>
-    let useStringId = false;
+            zip.file("pack.mcmeta", JSON.stringify({
+                pack: {
+                    pack_format: 63,
+                    description: `${packName} Resource Pack`
+                }
+            }, null, 4));
 
-    function toggleMode() {
-      useStringId = !useStringId;
-      document.getElementById("modeLabel").textContent = useStringId ? "String ID" : "Integer ID";
-      document.querySelector(".mode-toggle a").textContent = useStringId ? "Switch to Integer ID" : "Switch to String ID";
-      updateGive();
-    }
+            const textureName = textureFile.name.split('.')[0];
+            const modelJson = JSON.parse(await modelFile.text());
 
-    function updateGive() {
-      const base = document.getElementById("baseItem").value.trim();
-      const id = document.getElementById("itemId").value.trim();
-      const preview = document.getElementById("giveCommand");
-      if (!base || !id) return preview.textContent = "";
-      preview.textContent = useStringId
-        ? `/give @p ${base}[minecraft:custom_model_data={strings:["${id}"]}]`
-        : `/give @p ${base}{CustomModelData:${parseInt(id)}}`;
-    }
+            modelJson.textures = {
+                "0": `minecraft:item/${textureName}`,
+                "particle": `minecraft:item/${textureName}`
+            };
 
-    function copyGive() {
-      const cmd = document.getElementById("giveCommand").textContent;
-      if (!cmd) return;
-      navigator.clipboard.writeText(cmd).then(() => alert("Copied!"));
-    }
+            const pathModel = `assets/minecraft/models/item/${itemId}.json`;
+            zip.file(pathModel, JSON.stringify(modelJson, null, 4));
 
-    document.getElementById("baseItem").addEventListener("input", updateGive);
-    document.getElementById("itemId").addEventListener("input", updateGive);
+            const selectorModel = {
+                model: {
+                    type: "select",
+                    property: "custom_model_data",
+                    fallback: {
+                        type: "model",
+                        model: `item/${baseItem}`
+                    },
+                    cases: [
+                        {
+                            when: itemId,
+                            model: {
+                                type: "model",
+                                model: `item/${itemId}`
+                            }
+                        }
+                    ]
+                }
+            };
+            const selectorPath = `assets/minecraft/items/${baseItem}.json`;
+            zip.file(selectorPath, JSON.stringify(selectorModel, null, 4));
 
-    document.getElementById("generatePack").addEventListener("click", async () => {
-      const pack = document.getElementById("packName").value.trim();
-      const id = document.getElementById("itemId").value.trim();
-      const base = document.getElementById("baseItem").value.trim();
-      const model = document.getElementById("modelFile").files[0];
-      const texture = document.getElementById("textureFile").files[0];
+            const texPath = `assets/minecraft/textures/item/${textureFile.name}`;
+            zip.file(texPath, await textureFile.arrayBuffer());
 
-      if (!pack || !id || !base || !model || !texture) {
-        return alert("Fill all fields and select files!");
-      }
+            const blob = await zip.generateAsync({ type: "blob" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `${packName}.zip`;
+            a.click();
 
-      const zip = new JSZip();
-      zip.file("pack.mcmeta", JSON.stringify({
-        pack: { pack_format: 63, description: pack }
-      }, null, 2));
-
-      const modelReader = new FileReader();
-      const textureReader = new FileReader();
-
-      modelReader.onload = () => {
-        const modelJson = JSON.parse(modelReader.result);
-        modelJson.textures = {
-          "0": `minecraft:item/${id}`,
-          "particle": `minecraft:item/${id}`
-        };
-        zip.file(`assets/minecraft/models/item/${id}.json`, JSON.stringify(modelJson, null, 2));
-      };
-
-      textureReader.onload = () => {
-        zip.file(`assets/minecraft/textures/item/${id}.png`, textureReader.result);
-      };
-
-      modelReader.readAsText(model);
-      textureReader.readAsArrayBuffer(texture);
-
-      await new Promise(r => modelReader.onloadend = r);
-      await new Promise(r => textureReader.onloadend = r);
-
-      if (useStringId) {
-        zip.file(`assets/minecraft/items/${base}.json`, JSON.stringify({
-          model: {
-            type: "select",
-            property: "custom_model_data",
-            fallback: { type: "model", model: `item/${base}` },
-            cases: [{ when: id, model: { type: "model", model: `item/${id}` } }]
-          }
-        }, null, 2));
-      } else {
-        zip.file(`assets/minecraft/models/item/${base}.json`, JSON.stringify({
-          parent: "item/generated",
-          overrides: [{
-            predicate: { custom_model_data: parseInt(id) },
-            model: `item/${id}`
-          }]
-        }, null, 2));
-      }
-
-      zip.generateAsync({ type: "blob" }).then(blob => {
-        const link = document.getElementById("downloadLink");
-        link.href = URL.createObjectURL(blob);
-        link.download = `${pack}.zip`;
-        link.style.display = "inline-block";
-        link.textContent = `Download ${pack}.zip`;
-      });
-    });
-  </script>
+            document.getElementById('givecommand').value = `/give @p ${baseItem}[minecraft:custom_model_data={strings:["${itemId}"]}]`;
+        }
+    </script>
 </body>
 </html>
-
