@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Resource Pack Builder | Skythoria Tools</title>
   <style>
-    @font-face {
-      font-family: 'Minecraft';
-      src: url('/assets/MinecraftRegular.woff') format('woff');
-    }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #111;
@@ -39,7 +35,7 @@
     }
     h1, h2 {
       color: #FF3B3F;
-      font-family: 'Minecraft', monospace;
+      font-family: monospace;
       margin-top: 0;
     }
     p, ul {
@@ -84,7 +80,7 @@
       color: #0f0;
       border-radius: 4px;
       margin-top: 5px;
-      word-break: break-all;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -171,17 +167,14 @@
 
       const zip = new JSZip();
 
-      // pack.mcmeta
       zip.file("pack.mcmeta", JSON.stringify({
         pack: { pack_format: 63, description: pack }
       }, null, 4));
 
-      // Build paths
       const selectorPath = `assets/minecraft/items/${base}.json`;
       const modelPath = `assets/minecraft/models/item/${id}.json`;
       const texturePath = `assets/minecraft/textures/item/${id}.png`;
 
-      // Add selector JSON
       zip.file(selectorPath, JSON.stringify({
         model: {
           type: "select",
