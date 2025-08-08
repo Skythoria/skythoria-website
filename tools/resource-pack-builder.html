@@ -82,6 +82,13 @@
       border-radius: 4px;
       margin-top: 5px;
     }
+    ol {
+      padding-left: 20px;
+      line-height: 1.6;
+    }
+    ol li::marker {
+      color: #FF3B3F;
+    }
   </style>
 </head>
 <body>
@@ -93,7 +100,21 @@
 
   <section>
     <h1>Resource Pack Builder</h1>
+    <p>This tool generates a complete Minecraft 1.21.6+ resource pack using a model and texture with <code>CustomModelData</code> support.</p>
 
+    <h2>How to Use</h2>
+    <ol>
+      <li>✅ <strong>Create your model</strong> using <a href="https://www.blockbench.net/" target="_blank" style="color:#FF3B3F;">Blockbench</a>. Use the Java Block/Item model preset.</li>
+      <li>💾 <strong>Export</strong> your model as a <code>.json</code> file and make sure you also save the <code>.png</code> texture.</li>
+      <li>📂 <strong>Upload</strong> your <code>model.json</code> and <code>texture.png</code> using the tool below.</li>
+      <li>✍️ <strong>Fill in</strong> the pack name, base item (like <code>bat</code>), and a string ID for your model.</li>
+      <li>📦 <strong>Click Generate</strong> to build the full folder structure and resource pack files.</li>
+      <li>📁 <strong>Place the ZIP or folder</strong> in your Minecraft <code>resourcepacks</code> directory.</li>
+      <li>🎮 Use the generated <code>/give</code> command to spawn your custom item in-game.</li>
+    </ol>
+  </section>
+
+  <section>
     <label>Resource Pack Name:</label>
     <input type="text" id="packName" placeholder="Example: SkythoriaPack">
 
