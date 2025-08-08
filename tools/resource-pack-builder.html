@@ -99,26 +99,18 @@
     <h1>Resource Pack Builder</h1>
     <p>This tool creates a working Minecraft 1.21.6+ resource pack using a model and texture exported from Blockbench.</p>
 
-    <h2>Instructions</h2>
-    <ul>
-      <li>🎨 Design your 3D item in <a href="https://blockbench.net/" target="_blank">Blockbench</a>.</li>
-      <li>💾 Export the model as a Java Edition <code>.json</code> file and the texture as <code>.png</code>.</li>
-      <li>📥 Upload them below and pick a name, ID, and base item.</li>
-      <li>🧠 Tip: Use unique <strong>base items</strong> per model to avoid clashing.</li>
-    </ul>
-
     <label>Pack Name:</label>
     <input type="text" id="packName" placeholder="SkythoriaPack">
 
     <label>Custom Model ID:</label>
-    <input type="text" id="itemId" placeholder="bat (or 101 if using int)">
+    <input type="text" id="itemId" placeholder="Example: 4 or bonestaff">
 
     <label>Base Item to Override:</label>
-    <input type="text" id="baseItem" placeholder="stick, mace, sword, etc.">
+    <input type="text" id="baseItem" placeholder="stick, sword, etc.">
 
     <div class="mode-toggle">
-      Format: <strong id="modeLabel">String ID</strong> |
-      <a onclick="toggleMode()">Switch to Int ID</a>
+      Format: <strong id="modeLabel">Integer ID</strong> |
+      <a onclick="toggleMode()">Switch to String ID</a>
     </div>
 
     <label>Model File (.json):</label>
@@ -141,11 +133,12 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
-    let useStringId = true;
+    let useStringId = false;
 
     function toggleMode() {
       useStringId = !useStringId;
       document.getElementById("modeLabel").textContent = useStringId ? "String ID" : "Integer ID";
+      document.querySelector(".mode-toggle a").textContent = useStringId ? "Switch to Integer ID" : "Switch to String ID";
       updateGive();
     }
 
@@ -153,12 +146,10 @@
       const base = document.getElementById("baseItem").value.trim();
       const id = document.getElementById("itemId").value.trim();
       const preview = document.getElementById("giveCommand");
-
       if (!base || !id) return preview.textContent = "";
-
       preview.textContent = useStringId
         ? `/give @p ${base}[minecraft:custom_model_data={strings:["${id}"]}]`
-        : `/give @p ${base}{CustomModelData:${id}}`;
+        : `/give @p ${base}{CustomModelData:${parseInt(id)}}`;
     }
 
     function copyGive() {
@@ -208,21 +199,26 @@
       await new Promise(r => modelReader.onloadend = r);
       await new Promise(r => textureReader.onloadend = r);
 
-      const override = useStringId
-        ? {
-            model: {
-              type: "select",
-              property: "custom_model_data",
-              fallback: { type: "model", model: `item/${base}` },
-              cases: [{ when: id, model: { type: "model", model: `item/${id}` } }]
-            }
+      if (useStringId) {
+        zip.file(`assets/minecraft/items/${base}.json`, JSON.stringify({
+          model: {
+            type: "select",
+            property: "custom_model_data",
+            fallback: { type: "model", model: `item/${base}` },
+            cases: [{ when: id, model: { type: "model", model: `item/${id}` } }]
           }
-        : {
-            parent: "item/generated",
-            overrides: [{ predicate: { custom_model_data: parseInt(id) }, model: `item/${id}` }]
-          };
-
-      zip.file(`assets/minecraft/items/${base}.json`, JSON.stringify(override, null, 2));
+        }, null, 2));
+      } else {
+        zip.file(`assets/minecraft/models/item/${base}.json`, JSON.stringify({
+          parent: "item/generated",
+          overrides: [{
+            predicate: {
+              custom_model_data: parseInt(id)
+            },
+            model: `item/${id}`
+          }]
+        }, null, 2));
+      }
 
       zip.generateAsync({ type: "blob" }).then(blob => {
         const link = document.getElementById("downloadLink");
