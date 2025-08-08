@@ -1,132 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Skythoria Resource Pack Builder (String ID)</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: #121212;
-            color: white;
-            padding: 20px;
-        }
-        input, select, button, textarea {
-            width: 100%;
-            margin: 10px 0;
-            padding: 8px;
-            background: #1e1e1e;
-            color: white;
-            border: 1px solid #444;
-        }
-        button {
-            background: #b22222;
-            border: none;
-            cursor: pointer;
-        }
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-        .output {
-            background: #1e1e1e;
-            padding: 10px;
-            border: 1px solid #444;
-            white-space: pre-wrap;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skythoria Resource Pack Builder</title>
+  <link rel="stylesheet" href="/skythoria-website/tools/style.css" />
+  <script src="/skythoria-website/tools/script.js" defer></script>
+  <style>
+    body { background-color: #121212; color: white; font-family: Arial, sans-serif; }
+    .container { max-width: 900px; margin: 60px auto; padding: 20px; background: #1e1e1e; border-radius: 10px; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
+    h1 { color: #ff4c4c; text-align: center; }
+    label { display: block; margin: 15px 0 5px; }
+    input[type="text"], input[type="file"] {
+      width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 5px;
+    }
+    button {
+      margin-top: 20px; padding: 10px 20px; background-color: #d32f2f; color: white;
+      border: none; border-radius: 5px; cursor: pointer;
+    }
+    button:hover { background-color: #ff6659; }
+    .give-preview { background: #000; padding: 10px; border: 1px solid #555; margin-top: 15px; font-family: monospace; }
+  </style>
 </head>
 <body>
+  <div class="nav-bar">
+    <a href="/skythoria-website/index.html">Home</a>
+    <a href="/skythoria-website/tools/index.html">Tools</a>
+    <a href="https://discord.gg/skyblock">Discord</a>
+  </div>
+  <div class="banner">
+    <img src="/skythoria-website/assets/banner.png" alt="Skythoria Banner" />
+  </div>
+  <div class="container">
     <h1>Skythoria Resource Pack Builder</h1>
-    <p>This tool generates a resource pack using string-based <code>custom_model_data</code> entries for Minecraft 1.21.6+ (singleplayer only).</p>
+    <p>This version generates packs using string-based <code>custom_model_data</code> (for single-player).</p>
 
-    <label for="packname">Pack Name</label>
-    <input type="text" id="packname" placeholder="e.g., SkythoriaCustomPack">
+    <label>Pack Name</label>
+    <input type="text" id="packName" placeholder="e.g. SkythoriaPack" />
 
-    <label for="itemid">Custom Model ID (string)</label>
-    <input type="text" id="itemid" placeholder="e.g., bonestaff">
+    <label>Base Item (e.g. bone, stick)</label>
+    <input type="text" id="baseItem" placeholder="e.g. bone" />
 
-    <label for="baseitem">Base Item (vanilla Minecraft item)</label>
-    <input type="text" id="baseitem" placeholder="e.g., bone">
+    <label>Model ID (string ID, lowercase)</label>
+    <input type="text" id="modelID" placeholder="e.g. bonestaff" />
 
-    <label for="modelfile">Model JSON File (.json)</label>
-    <input type="file" id="modelfile" accept=".json">
+    <label>Upload .json model</label>
+    <input type="file" id="modelFile" accept=".json" />
 
-    <label for="texturefile">Texture PNG File (.png)</label>
-    <input type="file" id="texturefile" accept=".png">
+    <label>Upload .png texture</label>
+    <input type="file" id="textureFile" accept=".png" />
 
-    <button onclick="generatePack()">Generate Pack (.zip)</button>
+    <button onclick="buildPack()">Generate Pack</button>
 
-    <h3>Give Command</h3>
-    <input type="text" id="givecommand" readonly>
+    <div id="status"></div>
+    <div class="give-preview" id="giveCommand"></div>
+  </div>
 
-    <script>
-        async function generatePack() {
-            const packName = document.getElementById('packname').value.trim();
-            const itemId = document.getElementById('itemid').value.trim();
-            const baseItem = document.getElementById('baseitem').value.trim();
-            const modelFile = document.getElementById('modelfile').files[0];
-            const textureFile = document.getElementById('texturefile').files[0];
+  <script>
+    function buildPack() {
+      const packName = document.getElementById('packName').value.trim();
+      const baseItem = document.getElementById('baseItem').value.trim();
+      const modelID = document.getElementById('modelID').value.trim();
+      const modelFile = document.getElementById('modelFile').files[0];
+      const textureFile = document.getElementById('textureFile').files[0];
 
-            if (!packName || !itemId || !baseItem || !modelFile || !textureFile) {
-                alert("Fill in all fields and select both files.");
-                return;
-            }
+      if (!packName || !baseItem || !modelID || !modelFile || !textureFile) {
+        document.getElementById("status").innerText = "❌ Fill in all fields and upload both files.";
+        return;
+      }
 
-            const JSZip = await import("https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm");
-            const zip = new JSZip.default();
-
-            zip.file("pack.mcmeta", JSON.stringify({
-                pack: {
-                    pack_format: 63,
-                    description: `${packName} Resource Pack`
-                }
-            }, null, 4));
-
-            const textureName = textureFile.name.split('.')[0];
-            const modelJson = JSON.parse(await modelFile.text());
-
-            modelJson.textures = {
-                "0": `minecraft:item/${textureName}`,
-                "particle": `minecraft:item/${textureName}`
-            };
-
-            const pathModel = `assets/minecraft/models/item/${itemId}.json`;
-            zip.file(pathModel, JSON.stringify(modelJson, null, 4));
-
-            const selectorModel = {
-                model: {
-                    type: "select",
-                    property: "custom_model_data",
-                    fallback: {
-                        type: "model",
-                        model: `item/${baseItem}`
-                    },
-                    cases: [
-                        {
-                            when: itemId,
-                            model: {
-                                type: "model",
-                                model: `item/${itemId}`
-                            }
-                        }
-                    ]
-                }
-            };
-            const selectorPath = `assets/minecraft/items/${baseItem}.json`;
-            zip.file(selectorPath, JSON.stringify(selectorModel, null, 4));
-
-            const texPath = `assets/minecraft/textures/item/${textureFile.name}`;
-            zip.file(texPath, await textureFile.arrayBuffer());
-
-            const blob = await zip.generateAsync({ type: "blob" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `${packName}.zip`;
-            a.click();
-
-            document.getElementById('givecommand').value = `/give @p ${baseItem}[minecraft:custom_model_data={strings:["${itemId}"]}]`;
-        }
-    </script>
+      const giveCmd = `/give @p ${baseItem}[minecraft:custom_model_data={strings:["${modelID}"]}]`;
+      document.getElementById("giveCommand").innerText = "Give Command:
+" + giveCmd;
+      document.getElementById("status").innerText = "✅ Pack built (download feature not implemented in this version)";
+    }
+  </script>
 </body>
 </html>
