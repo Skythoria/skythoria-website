@@ -200,7 +200,6 @@
       await new Promise(r => textureReader.onloadend = r);
 
       if (useStringId) {
-        zip.folder("assets/minecraft/items");
         zip.file(`assets/minecraft/items/${base}.json`, JSON.stringify({
           model: {
             type: "select",
@@ -210,13 +209,10 @@
           }
         }, null, 2));
       } else {
-        zip.folder("assets/minecraft/models/item");
         zip.file(`assets/minecraft/models/item/${base}.json`, JSON.stringify({
           parent: "item/generated",
           overrides: [{
-            predicate: {
-              custom_model_data: parseInt(id)
-            },
+            predicate: { custom_model_data: parseInt(id) },
             model: `item/${id}`
           }]
         }, null, 2));
