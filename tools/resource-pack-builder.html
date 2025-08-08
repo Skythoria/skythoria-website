@@ -74,20 +74,22 @@
     button:hover, .copy-btn:hover {
       background: #e03335;
     }
+    .item-block {
+      border: 1px solid #333;
+      padding: 15px;
+      margin-top: 20px;
+      background: #1a1a1a;
+      border-radius: 6px;
+    }
     .give-preview {
-      width: 100%;
-      padding: 8px;
-      background: #2d2d2d;
+      font-family: monospace;
       color: #0f0;
+      background: #2d2d2d;
+      padding: 5px;
+      display: block;
       border-radius: 4px;
       margin-top: 5px;
-    }
-    ol {
-      padding-left: 20px;
-      line-height: 1.6;
-    }
-    ol li::marker {
-      color: #FF3B3F;
+      word-wrap: break-word;
     }
   </style>
 </head>
@@ -100,127 +102,131 @@
 
   <section>
     <h1>Resource Pack Builder</h1>
-    <p>This tool generates a complete Minecraft 1.21.6+ resource pack using a model and texture with <code>CustomModelData</code> support.</p>
+    <p>This tool takes <strong>Blockbench model (.json)</strong> and <strong>texture (.png)</strong> and outputs a working Minecraft 1.21.6+ resource pack using <code>pack_format: 63</code> with <code>custom_model_data</code> (string-based).</p>
+    <ul>
+      <li>Create models using <a href="https://blockbench.net/" target="_blank">Blockbench</a> (Java format)</li>
+      <li>Export the model JSON and texture PNG</li>
+      <li>Fill out the base item and model ID per entry</li>
+      <li>Download the final ZIP pack and place in your <code>.minecraft/resourcepacks</code> folder</li>
+    </ul>
 
-    <h2>How to Use</h2>
-    <ol>
-      <li>✅ <strong>Create your model</strong> using <a href="https://www.blockbench.net/" target="_blank" style="color:#FF3B3F;">Blockbench</a>. Use the Java Block/Item model preset.</li>
-      <li>💾 <strong>Export</strong> your model as a <code>.json</code> file and make sure you also save the <code>.png</code> texture.</li>
-      <li>📂 <strong>Upload</strong> your <code>model.json</code> and <code>texture.png</code> using the tool below.</li>
-      <li>✍️ <strong>Fill in</strong> the pack name, base item (like <code>bat</code>), and a string ID for your model.</li>
-      <li>📦 <strong>Click Generate</strong> to build the full folder structure and resource pack files.</li>
-      <li>📁 <strong>Place the ZIP or folder</strong> in your Minecraft <code>resourcepacks</code> directory.</li>
-      <li>🎮 Use the generated <code>/give</code> command to spawn your custom item in-game.</li>
-    </ol>
-  </section>
-
-  <section>
     <label>Resource Pack Name:</label>
     <input type="text" id="packName" placeholder="Example: SkythoriaPack">
 
-    <label>Custom Model ID (string):</label>
-    <input type="text" id="itemId" placeholder="Example: bat">
+    <div id="itemsContainer"></div>
 
-    <label>Base Item to Override:</label>
-    <input type="text" id="baseItem" placeholder="Example: mace">
-
-    <label>Model File (.json):</label>
-    <input type="file" id="modelFile" accept=".json">
-
-    <label>Texture File (.png):</label>
-    <input type="file" id="textureFile" accept=".png">
-
+    <button onclick="addItem()">Add Item</button>
     <button id="generatePack">Generate Resource Pack</button>
 
-    <label>Give Command:</label>
-    <div>
-      <span class="give-preview" id="giveCommand"></span>
-      <button class="copy-btn" id="copyBtn">Copy</button>
+    <div style="margin-top:20px;">
+      <a id="downloadLink" class="button" style="display:none;">Download Pack</a>
     </div>
-
-    <label>Download:</label>
-    <a id="downloadLink" class="button" style="display:none;">Download Pack Folder</a>
   </section>
 
-  <script>
-    function updateGive() {
-      const base = document.getElementById('baseItem').value.trim();
-      const id = document.getElementById('itemId').value.trim();
-      const preview = document.getElementById('giveCommand');
-      if (base && id) {
-        preview.textContent = `/give @p ${base}[minecraft:custom_model_data={strings:["${id}"]}]`;
-      } else {
-        preview.textContent = '';
-      }
-    }
-    document.getElementById('baseItem').addEventListener('input', updateGive);
-    document.getElementById('itemId').addEventListener('input', updateGive);
-
-    document.getElementById('copyBtn').addEventListener('click', () => {
-      const text = document.getElementById('giveCommand').textContent;
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(() => alert('Copied!'));
-    });
-
-    document.getElementById('generatePack').addEventListener('click', () => {
-      const pack = document.getElementById('packName').value.trim();
-      const id = document.getElementById('itemId').value.trim();
-      const base = document.getElementById('baseItem').value.trim();
-      const model = document.getElementById('modelFile').files[0];
-      const texture = document.getElementById('textureFile').files[0];
-
-      if (!pack || !id || !base || !model || !texture) {
-        return alert("Fill all fields and select files!");
-      }
-
-      const zip = new JSZip();
-
-      // pack.mcmeta
-      zip.file("pack.mcmeta", JSON.stringify({
-        pack: { pack_format: 63, description: pack }
-      }, null, 4));
-
-      // JSON and PNG
-      const paths = {
-        selector: `assets/minecraft/items/${base}.json`,
-        model: `assets/minecraft/models/item/${id}.json`,
-        texture: `assets/minecraft/textures/item/${id}.png`
-      };
-
-      zip.file(paths.selector, JSON.stringify({
-        model: {
-          type: "select",
-          property: "custom_model_data",
-          fallback: { type: "model", model: `item/${base}` },
-          cases: [
-            { when: id, model: { type: "model", model: `item/${id}` } }
-          ]
-        }
-      }, null, 4));
-
-      const readerModel = new FileReader();
-      readerModel.onload = () => zip.file(paths.model, readerModel.result);
-      readerModel.readAsText(model);
-
-      const readerTexture = new FileReader();
-      readerTexture.onload = () => zip.file(paths.texture, readerTexture.result);
-      readerTexture.readAsArrayBuffer(texture);
-
-      Promise.all([
-        new Promise(r => readerModel.onloadend = r),
-        new Promise(r => readerTexture.onloadend = r)
-      ]).then(() => {
-        zip.generateAsync({ type: "blob" }).then(blob => {
-          const link = document.getElementById('downloadLink');
-          link.href = URL.createObjectURL(blob);
-          link.download = `${pack}.zip`;
-          link.style.display = "inline-block";
-          link.textContent = `Download ${pack}.zip`;
-        });
-      });
-    });
-  </script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    let itemCount = 0;
+    function addItem() {
+      itemCount++;
+      const div = document.createElement("div");
+      div.className = "item-block";
+      div.innerHTML = `
+        <label>Item #${itemCount}</label>
+        <label>Custom Model ID (string):</label>
+        <input type="text" class="id">
+        <label>Base Item:</label>
+        <input type="text" class="base">
+        <label>Model JSON:</label>
+        <input type="file" class="model" accept=".json">
+        <label>Texture PNG:</label>
+        <input type="file" class="texture" accept=".png">
+        <label>Give Command:</label>
+        <span class="give-preview"></span>
+      `;
+      document.getElementById('itemsContainer').appendChild(div);
+
+      const update = () => {
+        const base = div.querySelector('.base').value.trim();
+        const id = div.querySelector('.id').value.trim();
+        const out = div.querySelector('.give-preview');
+        out.textContent = base && id ? `/give @p ${base}[minecraft:custom_model_data={strings:["${id}"]}]` : '';
+      };
+      div.querySelector('.base').addEventListener('input', update);
+      div.querySelector('.id').addEventListener('input', update);
+    }
+
+    document.getElementById('generatePack').addEventListener('click', async () => {
+      const zip = new JSZip();
+      const packName = document.getElementById('packName').value.trim();
+      if (!packName) return alert("Enter pack name!");
+
+      zip.file("pack.mcmeta", JSON.stringify({
+        pack: { pack_format: 63, description: packName }
+      }, null, 2));
+
+      const selectors = {}; // baseItem → list of cases
+      const reads = [];
+
+      for (const block of document.querySelectorAll('.item-block')) {
+        const id = block.querySelector('.id').value.trim();
+        const base = block.querySelector('.base').value.trim();
+        const modelFile = block.querySelector('.model').files[0];
+        const textureFile = block.querySelector('.texture').files[0];
+        if (!id || !base || !modelFile || !textureFile) continue;
+
+        const modelPath = `assets/minecraft/models/item/${id}.json`;
+        const texturePath = `assets/minecraft/textures/item/${id}.png`;
+        const selectorPath = `assets/minecraft/items/${base}.json`;
+
+        const modelReader = new FileReader();
+        const textureReader = new FileReader();
+
+        reads.push(new Promise((res) => {
+          modelReader.onload = () => {
+            let modelData = JSON.parse(modelReader.result);
+            modelData.textures = { layer0: `item/${id}` };
+            zip.file(modelPath, JSON.stringify(modelData, null, 2));
+            res();
+          };
+          modelReader.readAsText(modelFile);
+        }));
+
+        reads.push(new Promise((res) => {
+          textureReader.onload = () => {
+            zip.file(texturePath, textureReader.result);
+            res();
+          };
+          textureReader.readAsArrayBuffer(textureFile);
+        }));
+
+        if (!selectors[base]) selectors[base] = [];
+        selectors[base].push({ when: id, model: { type: "model", model: `item/${id}` } });
+      }
+
+      await Promise.all(reads);
+
+      for (const [base, cases] of Object.entries(selectors)) {
+        const selectorJson = {
+          model: {
+            type: "select",
+            property: "custom_model_data",
+            fallback: { type: "model", model: `item/${base}` },
+            cases: cases
+          }
+        };
+        zip.file(`assets/minecraft/items/${base}.json`, JSON.stringify(selectorJson, null, 2));
+      }
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const link = document.getElementById('downloadLink');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${packName}.zip`;
+      link.style.display = "inline-block";
+      link.textContent = `Download ${packName}.zip`;
+    });
+
+    // Add default 1 item row
+    addItem();
+  </script>
 </body>
 </html>
