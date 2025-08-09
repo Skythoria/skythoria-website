@@ -1,4 +1,4 @@
-/* Skythoria website JS — PP2 */
+/* Skythoria website JS — PP3 (status-based static banner, no fade) */
 const SKY = {
   discordInvite: "https://discord.gg/fVjtFAJD",
   youtubeUrl: "https://www.youtube.com/@Skythoria",
@@ -7,6 +7,13 @@ const SKY = {
 };
 
 let SKY_STATUS = "checking"; // "online" | "offline" | "checking"
+
+// map each status to ONE banner filename (adjust these to your preferred numbers)
+const SKY_STATUS_BANNER = {
+  online:   "banner_0.png",
+  offline:  "banner_3.png",
+  checking: "banner_4.png",
+};
 
 /* ---------- Nav / Links ---------- */
 function markActive() {
@@ -24,63 +31,39 @@ function wireDiscordLinks() {
   const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
 }
 
-/* ---------- Banner: fixed filenames, instant paint, non-blocking preload ---------- */
-const SKY_BANNERS = ["banner_0.png","banner_1.png","banner_2.png","banner_3.png","banner_4.png"];
+/* ---------- Banner: status-based, no fade, no flash ---------- */
+let _bannerImgEl = null;
 
-async function initBannerRotator() {
+function preload(url) {
+  return new Promise(res => {
+    const t = new Image();
+    t.onload = () => res({ ok: true, url });
+    t.onerror = () => res({ ok: false, url });
+    t.src = url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
+  });
+}
+
+async function setBannerForStatus(status) {
+  const name = SKY_STATUS_BANNER[status] || SKY_STATUS_BANNER.checking;
+  const url = `/assets/banners/${name}`;
+  // Preload target before swapping to avoid black flash
+  const r = await preload(url);
+  if (!_bannerImgEl) return;
+  if (r.ok) {
+    _bannerImgEl.src = url + `?t=${Date.now()}`;
+  }
+}
+
+async function initBannerStatic() {
   const wrap = document.getElementById('banner-rotator'); if (!wrap) return;
 
-  // 1) Paint first image immediately
-  const img = document.createElement('img');
-  img.alt = 'Skythoria Banner';
-  img.decoding = 'async';
-  img.style.transition = 'opacity .4s ease';
-  img.src = `/assets/banners/${SKY_BANNERS[0]}?v=${Date.now()}`; // instant first frame
-  wrap.appendChild(img);
-
-  // 2) Choose which set to use by status (edit these indices to taste)
-  const sets = {
-    online:   [0,1,2],   // rotate these when server is online
-    offline:  [3],       // show just one when offline (static)
-    checking: [0,4]      // while checking, bounce between two
-  };
-  function pickSet() {
-    const idxs = sets[SKY_STATUS] || [0,1,2,3,4];
-    return idxs.filter(i => i>=0 && i<SKY_BANNERS.length);
-  }
-
-  // 3) Preload chosen images, then start rotation once we have 2+
-  function preload(name) {
-    return new Promise(res => {
-      const t = new Image();
-      t.onload  = () => res({ok:true,  src: `/assets/banners/${name}`});
-      t.onerror = () => res({ok:false, src: `/assets/banners/${name}`});
-      t.src = `/assets/banners/${name}?v=${Date.now()}`;
-    });
-  }
-
-  async function startRotation() {
-    const use = pickSet().map(i => SKY_BANNERS[i]);
-    const loaded = [];
-    for (const name of use) {
-      const r = await preload(name);
-      if (r.ok) loaded.push(r.src);
-      if (loaded.length >= 6) break; // safety cap
-    }
-    if (loaded.length <= 1) return; // keep static if only 1 ready
-
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % loaded.length;
-      img.style.opacity = '0.2';
-      setTimeout(() => {
-        img.src = loaded[i] + `?t=${Date.now()}`; // bust any edge cache
-        img.style.opacity = '1';
-      }, 180);
-    }, 6000);
-  }
-
-  startRotation();
+  // Create the img once, point it to "checking" immediately
+  const first = `/assets/banners/${(SKY_STATUS_BANNER.checking || 'banner_0.png')}`;
+  _bannerImgEl = document.createElement('img');
+  _bannerImgEl.alt = 'Skythoria Banner';
+  _bannerImgEl.decoding = 'async';
+  _bannerImgEl.src = first + `?t=${Date.now()}`;
+  wrap.appendChild(_bannerImgEl);
 }
 
 /* ---------- Server status (traffic lights) + MOTD overlay ---------- */
@@ -88,25 +71,32 @@ async function renderServerStatus() {
   const box = document.getElementById('serverStatus'); if (!box) return;
   const host = SKY.serverHost;
   box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Checking status…</div></div>`;
+  const ov = document.getElementById('banner-overlay');
+
   async function get(u){ const r=await fetch(u,{cache:'no-cache'}); if(!r.ok) throw 0; return r.json(); }
+
   try {
     let data; try { data = await get(`https://api.mcsrvstat.us/3/${host}`); } catch { data = await get(`https://api.mcsrvstat.us/2/${host}`); }
     if (data && data.online) {
       SKY_STATUS = "online";
       const players = (data.players && data.players.online) || 0;
       box.innerHTML = `<div class="status"><span class="light green"></span><div><strong>Online</strong> — ${players} player${players===1?'':'s'} online</div></div>`;
-      // MOTD overlay (if present)
+      // MOTD overlay
       const motd = (data.motd && (data.motd.clean||data.motd)) ? ((data.motd.clean||[]).join ? (data.motd.clean||[]).join(' ') : data.motd) : '';
-      const ov = document.getElementById('banner-overlay');
       if (ov) ov.textContent = motd || '';
     } else {
       SKY_STATUS = "offline";
       box.innerHTML = `<div class="status"><span class="light red"></span><div><strong>Offline</strong> — ${host}</div></div>`;
+      if (ov) ov.textContent = '';
     }
   } catch {
     SKY_STATUS = "checking";
     box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Status unavailable (cache). Try again soon.</div></div>`;
+    if (ov) ov.textContent = '';
   }
+
+  // After status is known, set the banner accordingly (no rotation)
+  setBannerForStatus(SKY_STATUS);
 }
 
 /* ---------- Contact (Discord webhook ticket) ---------- */
@@ -161,8 +151,8 @@ async function renderLatestNews() {
 document.addEventListener('DOMContentLoaded', () => {
   markActive();
   wireDiscordLinks();
-  renderServerStatus();     // sets SKY_STATUS
-  initBannerRotator();      // reads SKY_STATUS to pick images
+  initBannerStatic();   // show "checking" banner immediately
+  renderServerStatus(); // sets SKY_STATUS, swaps banner accordingly
   renderLatestNews();
   initContactForm();
 });
