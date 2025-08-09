@@ -1,48 +1,73 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Skythoria — Home</title>
-  <link rel="stylesheet" href="/assets/css/site.css?v=6">
+  <link rel="stylesheet" href="/assets/css/site.css?v=S1">
 </head>
 <body>
-  <div data-include="/tools/shared/header.html"></div>
-  <div data-include="/tools/shared/banner.html"></div>
+  
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">SKYTHORIA</a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/features.html">Features</a>
+      <a href="/news.html">News</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/support.html">Support</a>
+      <a id="discordLink" href="https://discord.gg/fVjtFAJD" target="_blank" rel="noopener">Discord</a>
+    </nav>
+  </div>
+</header>
+
+  
+<section class="banner">
+  <div class="banner-rotator" id="banner-rotator"></div>
+</section>
 
   <main class="main">
-    <div class="container center">
-      <div class="card" style="padding:28px">
-        <div class="hero-addr">Join: <code>skythoria.ooguy.com</code></div>
-        <div class="hero-sub">Java 1.21.6 — Multiplayer → Add Server → paste the address above</div>
-        <div style="margin-top:16px">
-          <a class="btn" data-discord>Join Discord</a>
-          <a class="btn" href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
-        </div>
+  <div class="container center">
+    <div class="hero">
+      <div class="hero-addr">Join: <code>skythoria.ooguy.com</code></div>
+      <div class="hero-sub">Java 1.21.6 — Multiplayer → Add Server → paste the address above</div>
+      <div style="margin-top:16px">
+        <a class="btn primary" data-discord>Join Discord</a>
+        <a class="btn" href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
       </div>
     </div>
+  </div>
 
-    <div class="container grid cols-3 section">
-      <section class="card">
-        <h2>What Makes Us Unique</h2>
-        <p>Hunting caves, fair economy, crates from gameplay, and community events.</p>
-        <a class="btn" href="/features.html" data-root>See Features</a>
-      </section>
-      <section class="card">
-        <h2>News & Updates</h2>
-        <p>We post development updates and events here.</p>
-        <a class="btn" href="/news.html" data-root>Read News</a>
-      </section>
-      <section class="card">
-        <h2>Need Help?</h2>
-        <p>Open a ticket—staff will reply via Discord.</p>
-        <a class="btn" href="/contact.html" data-root>Contact</a>
-      </section>
+  <div class="container grid cols-3" style="margin-top:18px">
+    <section class="card">
+      <h2>What Makes Us Unique</h2>
+      <p>Hunting caves, fair economy, crates from gameplay, and community events.</p>
+      <a class="btn" href="/features.html">See Features</a>
+    </section>
+    <section class="card">
+      <h2>News & Updates</h2>
+      <p>We post development updates and events here.</p>
+      <a class="btn" href="/news.html">Read News</a>
+    </section>
+    <section class="card">
+      <h2>Need Help?</h2>
+      <p>Open a ticket—staff will reply via Discord.</p>
+      <a class="btn" href="/contact.html">Contact</a>
+    </section>
+  </div>
+</main>
+  
+<footer class="site-footer" style="margin-top:24px">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-top:1px solid rgba(255,255,255,.06)">
+    <div style="font-weight:700;letter-spacing:.3px">© Skythoria</div>
+    <div class="links" style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="/">Home</a>
+      <a href="/support.html">Support</a>
+      <a href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
     </div>
-  </main>
+  </div>
+</footer>
 
-  <div data-include="/tools/shared/footer.html"></div>
-  <script src="/assets/js/include.js?v=6"></script>
-  <script src="/assets/js/site.js?v=6"></script>
+  <script src="/assets/js/site.js?v=S1"></script>
 </body>
 </html>

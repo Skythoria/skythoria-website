@@ -1,21 +1,53 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Skythoria — News</title>
-  <link rel="stylesheet" href="/assets/css/site.css?v=6">
+  <link rel="stylesheet" href="/assets/css/site.css?v=S1">
 </head>
 <body>
-  <div data-include="/tools/shared/header.html"></div>
+  
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">SKYTHORIA</a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/features.html">Features</a>
+      <a href="/news.html">News</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/support.html">Support</a>
+      <a id="discordLink" href="https://discord.gg/fVjtFAJD" target="_blank" rel="noopener">Discord</a>
+    </nav>
+  </div>
+</header>
+
+  
   <main class="main">
-    <div class="container">
-      <h1>News</h1>
-      <div id="newsListFull" class="section"></div>
+  <div class="container">
+    <h1 style="margin-top:0">News</h1>
+    <div id="newsListFull" class="grid" style="grid-template-columns:1fr"></div>
+    <script>
+    (async function(){
+      const el=document.getElementById('newsListFull');
+      try{const r=await fetch('/assets/data/news.json',{cache:'no-cache'});const posts=await r.json();
+        el.innerHTML=posts.map(p=>`<article class=card><h3 style="margin:0 0 8px">${p.title}</h3><div class=badge>${p.date}</div><p>${p.body}</p></article>`).join('');
+      }catch{el.innerHTML='<article class=card>No news yet.</article>'}
+    })();
+    </script>
+  </div>
+</main>
+  
+<footer class="site-footer" style="margin-top:24px">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-top:1px solid rgba(255,255,255,.06)">
+    <div style="font-weight:700;letter-spacing:.3px">© Skythoria</div>
+    <div class="links" style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="/">Home</a>
+      <a href="/support.html">Support</a>
+      <a href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
     </div>
-  </main>
-  <div data-include="/tools/shared/footer.html"></div>
-  <script src="/assets/js/include.js?v=6"></script>
-  <script src="/assets/js/site.js?v=6"></script>
+  </div>
+</footer>
+
+  <script src="/assets/js/site.js?v=S1"></script>
 </body>
 </html>

@@ -1,12 +1,17 @@
 
-/* Config */
 const SKY = {
   discordInvite: "https://discord.gg/fVjtFAJD",
   youtubeUrl: "https://www.youtube.com/@Skythoria",
-  contact: { webhook: "https://discord.com/api/webhooks/1403695213163053166/jOQRB2O-RQdwJmzhZLeeePRMmppkeZxS-xv7M4mGpSB_g0KLPamhxS_pkkNnv5VTilSh" },
-  storeUrl: ""
+  contact: { webhook: "https://discord.com/api/webhooks/1403695213163053166/jOQRB2O-RQdwJmzhZLeeePRMmppkeZxS-xv7M4mGpSB_g0KLPamhxS_pkkNnv5VTilSh" }
 };
 
+function markActive() {
+  const here = location.pathname.replace(/\/+$/,'') || '/';
+  document.querySelectorAll('nav a').forEach(a => {
+    const href = (a.getAttribute('href')||'').replace(/\/+$/,'') || '/';
+    if (href === here || (href !== '/' && here.startsWith(href))) a.classList.add('active');
+  });
+}
 function wireDiscordLinks() {
   document.querySelectorAll('a[data-discord], button[data-discord]').forEach(a => {
     if (a.tagName.toLowerCase()==='a') { a.href = SKY.discordInvite; a.target='_blank'; a.rel='noopener'; }
@@ -15,10 +20,51 @@ function wireDiscordLinks() {
   const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
 }
 
+async function initBannerRotator() {
+  const el = document.getElementById('banner-rotator'); if (!el) return;
+  async function manifest() {
+    try {
+      const r = await fetch('/assets/banners/_list.json', {cache:'no-cache'});
+      if (!r.ok) return null;
+      const arr = await r.json();
+      if (!Array.isArray(arr) || !arr.length) return null;
+      return arr.map(x => '/assets/banners/' + x);
+    } catch { return null; }
+  }
+  let list = await manifest();
+  if (!list) {
+    const exts = ['.webp','.png','.jpg','.jpeg']; list = [];
+    for (let i=0;i<=50;i++) {
+      for (const e of exts) list.push('/assets/banners/banner_' + i + e);
+      for (const e of exts) list.push('/assets/banners/Banner_' + i + e);
+      for (const e of exts) list.push('/assets/banners/banner' + i + e);
+      for (const e of exts) list.push('/assets/banners/Banner' + i + e);
+    }
+  }
+  const found = [];
+  for (const url of list) {
+    await new Promise(res => {
+      const t = new Image();
+      t.onload = () => { found.push(url); res(); };
+      t.onerror = () => res();
+      t.src = url + (url.includes('?')?'&':'?') + 'v=' + Date.now();
+    });
+  }
+  if (!found.length) { const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph); return; }
+  const img = document.createElement('img');
+  img.alt='Skythoria Banner'; img.decoding='async'; img.src = found[0];
+  img.style.transition='opacity .4s ease'; el.appendChild(img);
+  if (found.length>1) {
+    let i=0; setInterval(()=>{
+      i=(i+1)%found.length; img.style.opacity='0.2';
+      setTimeout(()=>{ img.src=found[i]; img.style.opacity='1'; }, 180);
+    }, 4500);
+  }
+}
+
 function initContactForm() {
   const form = document.getElementById('contactForm'); if (!form) return;
   const status = document.getElementById('contactStatus');
-  if (!(SKY.contact && SKY.contact.webhook)) { status.textContent = "Ticket system not configured."; form.querySelector('button[type=\"submit\"]').disabled = true; return; }
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
@@ -40,73 +86,14 @@ function initContactForm() {
       status.textContent = "Sending...";
       const res = await fetch(SKY.contact.webhook, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       if (!res.ok) throw 0;
-      form.reset(); status.innerHTML = `<span class="badge" style="background:#173f2b;border-color:#173f2b">Ticket sent to staff Discord</span>`;
+      form.reset(); status.innerHTML = `<span class="badge">Ticket sent to staff Discord</span>`;
     } catch { status.textContent = "Failed to send. Try again later."; }
   });
 }
 
-/* Banner: try manifest first, else look for /assets/banners/banner_0..99 (+ Banner_*, banner0..99) */
-async function initBannerRotator() {
-  const el = document.getElementById('banner-rotator'); if (!el) return;
-
-  async function fetchManifest() {
-    try {
-      const r = await fetch('/assets/banners/_list.json', {cache:'no-cache'});
-      if (!r.ok) return null;
-      const arr = await r.json();
-      if (!Array.isArray(arr)) return null;
-      return arr.map(name => '/assets/banners/' + name);
-    } catch { return null; }
-  }
-
-  let list = await fetchManifest();
-  if (!list || !list.length) {
-    const exts = ['.webp','.png','.jpg','.jpeg'];
-    list = [];
-    for (let i=0;i<100;i++) {
-      const bases = ['banner_'+i, 'Banner_'+i, 'banner'+i, 'Banner'+i];
-      for (const b of bases) for (const e of exts) list.push('/assets/banners/' + b + e);
-    }
-    // Also try generic names
-    const generic = ['banner','Banner','header','Header','hero','Hero','main','Main'];
-    for (const g of generic) for (const e of exts) list.push('/assets/banners/' + g + e);
-  }
-
-  const found = [];
-  let started = false;
-  function start() {
-    if (started || found.length===0) return;
-    started = true;
-    const img = document.createElement('img');
-    img.alt='Skythoria Banner'; img.decoding='async'; img.src = found[0];
-    el.appendChild(img);
-    let i=0; setInterval(()=>{ i=(i+1)%found.length; img.src = found[i]; }, 5000);
-  }
-
-  // Probe candidates
-  let any=false;
-  await Promise.all(list.map(url => new Promise(res => {
-    const t = new Image();
-    t.onload = () => { any=true; found.push(url); start(); res(); };
-    t.onerror = () => res();
-    t.src = url + (url.includes('?')?'&':'?') + 'v=' + Date.now();
-  })));
-  if (!any) { const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph); }
-}
-
-/* News */
-async function renderNewsList(sel) {
-  const el = document.querySelector(sel); if (!el) return;
-  try {
-    const r = await fetch('/assets/data/news.json', {cache:'no-cache'});
-    const posts = await r.json();
-    el.innerHTML = posts.map(p => `<article class="card"><h3>${p.title}</h3><div class="badge">${p.date}</div><p>${p.body}</p></article>`).join('');
-  } catch { el.innerHTML = '<div class="card">No news yet.</div>'; }
-}
-
-document.addEventListener('includes:ready', () => {
+document.addEventListener('DOMContentLoaded', () => {
+  markActive();
   wireDiscordLinks();
-  initContactForm();
   initBannerRotator();
-  renderNewsList('#newsListFull');
+  initContactForm();
 });
