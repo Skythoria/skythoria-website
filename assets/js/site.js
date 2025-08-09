@@ -7,6 +7,14 @@ const SKY = {
   storeUrl: ""
 };
 
+function wireDiscordLinks() {
+  document.querySelectorAll('a[data-discord], button[data-discord]').forEach(a => {
+    if (a.tagName.toLowerCase()==='a') { a.href = SKY.discordInvite; a.target='_blank'; a.rel='noopener'; }
+    else { a.addEventListener('click', () => window.open(SKY.discordInvite,'_blank','noopener')); }
+  });
+  const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
+}
+
 function initContactForm() {
   const form = document.getElementById('contactForm'); if (!form) return;
   const status = document.getElementById('contactStatus');
@@ -37,43 +45,53 @@ function initContactForm() {
   });
 }
 
-function wireDiscordLinks() {
-  document.querySelectorAll('a[data-discord], button[data-discord]').forEach(a => {
-    if (a.tagName.toLowerCase()==='a') { a.href = SKY.discordInvite; a.target='_blank'; a.rel='noopener'; }
-    else { a.addEventListener('click', () => window.open(SKY.discordInvite,'_blank','noopener')); }
-  });
-  const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
-}
-
-/* Banner rotator: supports banner_0, Banner_1, etc. */
-function initBannerRotator() {
+/* Banner: try manifest first, else look for /assets/banners/banner_0..99 (+ Banner_*, banner0..99) */
+async function initBannerRotator() {
   const el = document.getElementById('banner-rotator'); if (!el) return;
-  const folders = ['/assets/banners/','/assets/img/banners/'];
-  const bases = ['banner','Banner','BANNER','banner_','Banner_','BANNER_'];
-  const nums  = Array.from({length:20}, (_,i)=>String(i));
-  const plain = ['banner','Banner','BANNER','header','Header','main','Main','hero','Hero'];
-  const exts  = ['.webp','.png','.jpg','.jpeg'];
-  const candidates = [];
-  for (const f of folders) {
-    for (const b of bases) for (const n of nums) for (const e of exts) candidates.push(f + b + n + e);
-    for (const p of plain) for (const e of exts) candidates.push(f + p + e);
+
+  async function fetchManifest() {
+    try {
+      const r = await fetch('/assets/banners/_list.json', {cache:'no-cache'});
+      if (!r.ok) return null;
+      const arr = await r.json();
+      if (!Array.isArray(arr)) return null;
+      return arr.map(name => '/assets/banners/' + name);
+    } catch { return null; }
   }
-  const loaded = [];
-  function add(url){ loaded.push(url); if (loaded.length===1) start(); }
-  function start(){
+
+  let list = await fetchManifest();
+  if (!list || !list.length) {
+    const exts = ['.webp','.png','.jpg','.jpeg'];
+    list = [];
+    for (let i=0;i<100;i++) {
+      const bases = ['banner_'+i, 'Banner_'+i, 'banner'+i, 'Banner'+i];
+      for (const b of bases) for (const e of exts) list.push('/assets/banners/' + b + e);
+    }
+    // Also try generic names
+    const generic = ['banner','Banner','header','Header','hero','Hero','main','Main'];
+    for (const g of generic) for (const e of exts) list.push('/assets/banners/' + g + e);
+  }
+
+  const found = [];
+  let started = false;
+  function start() {
+    if (started || found.length===0) return;
+    started = true;
     const img = document.createElement('img');
-    img.alt='Skythoria Banner'; img.decoding='async'; img.src = loaded[0];
+    img.alt='Skythoria Banner'; img.decoding='async'; img.src = found[0];
     el.appendChild(img);
-    let i=0; setInterval(()=>{ i=(i+1)%loaded.length; img.src = loaded[i]; }, 5000);
+    let i=0; setInterval(()=>{ i=(i+1)%found.length; img.src = found[i]; }, 5000);
   }
-  let foundAny=false;
-  candidates.forEach(u => {
-    const test = new Image();
-    test.onload = () => { foundAny=true; add(u); };
-    test.onerror = () => {};
-    test.src = u + (u.includes('?')?'&':'?') + 'v=' + Date.now();
-  });
-  setTimeout(()=>{ if(!foundAny){ const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph);} }, 1500);
+
+  // Probe candidates
+  let any=false;
+  await Promise.all(list.map(url => new Promise(res => {
+    const t = new Image();
+    t.onload = () => { any=true; found.push(url); start(); res(); };
+    t.onerror = () => res();
+    t.src = url + (url.includes('?')?'&':'?') + 'v=' + Date.now();
+  })));
+  if (!any) { const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph); }
 }
 
 /* News */
