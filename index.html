@@ -1,208 +1,49 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Skythoria: Skyblock + MMO‑style leveling, custom caves & loot." />
-  <title>Skythoria</title>
-  <style>
-    @font-face {
-      font-family: 'Minecraft';
-      src: url('https://cdn.jsdelivr.net/gh/IdreesInc/Minecraft-Font@master/MinecraftRegular.woff') format('woff');
-    }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #111;
-      color: #EEE;
-      margin: 0;
-    }
-
-    .nav {
-      background: #1b1b1b;
-      padding: 10px 20px;
-      text-align: center;
-      border-bottom: 2px solid #FF3B3F;
-    }
-
-    .nav a {
-      color: #FF3B3F;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-    }
-
-    .nav a:hover {
-      text-decoration: underline;
-    }
-
-    .banner {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .banner img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    header, section {
-      max-width: 1500px;
-      margin: 20px auto;
-      padding: 20px;
-      background: #222;
-      border-radius: 8px;
-    }
-
-    h1, h2, h3 {
-      color: #FF3B3F;
-      margin-top: 0;
-    }
-
-    a.button {
-      display: inline-block;
-      padding: 12px 24px;
-      background: #FF3B3F;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 1.1em;
-    }
-
-    code {
-      background: #333;
-      padding: 2px 4px;
-      border-radius: 4px;
-      color: #0f0;
-    }
-
-    .step {
-      margin-bottom: 20px;
-    }
-
-    .step img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      background: transparent;
-    }
-
-    ul {
-      padding-left: 20px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.8em;
-      color: #666;
-    }
-
-    .news ul {
-      padding-left: 20px;
-      line-height: 1.6;
-    }
-
-    .news li {
-      list-style-type: square;
-    }
-  </style>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Skythoria — Home</title>
+  <link rel="stylesheet" href="/assets/css/site.css?v=1">
 </head>
 <body>
+  <div data-include="/tools/shared/header.html"></div>
+  <div data-include="/tools/shared/banner.html"></div>
 
-<div class="nav">
-  <a href="/">Home</a>
-  <a href="/tools/">Tools</a>
-  <a href="https://discord.gg/NCtM5fMY" target="_blank">Discord</a>
-</div>
+  <main class="main">
+    <div class="container grid cols-3">
+      <section class="card">
+        <h2>Start Playing</h2>
+        <p>Java <strong>1.21.6</strong>. Build your Skyblock island and join the community.</p>
+        <a class="btn primary" href="/join.html" data-root>How to Join</a>
+      </section>
 
-<div class="banner">
-  <img id="banner-rotator" src="assets/banners/banner1.png" alt="Skythoria Banner" />
-</div>
+      <section class="card">
+        <h2>What Makes Us Unique</h2>
+        <p>Hunting caves, fair economy, crates from gameplay, and community events.</p>
+        <a class="btn" href="/features.html" data-root>See Features</a>
+      </section>
 
-<section class="news">
-  <h2>News & Updates</h2>
-  <ul>
-    <li><strong>STATUS:</strong> Whitelist/invite-only Join Discord to get whitelisted. (pre-alpha phase)</li>
-    <li><strong>August 8:</strong> Created SHA1 Hash Generator tool on the website.</li>
-    <li><strong>August 8:</strong> Created Resource Pack Builder tool on the website for creating custom item models using Blockbench.</li>
-    <li><strong>August 4:</strong> Created MythicMob Creator tool on the website for creating Mob Configs for Mythic Mobs</li>
-    <li><strong>July 30:</strong> Server fully online and playable, setting up common areas. Creating hunting caves, shops and quests.</li>
-    <li><strong>July 28:</strong> Added custom NPCs, mobs, player shops, trade system, protections and more.</li>
-    <li><strong>August 27:</strong> Created Minecraft Text Formatter tool for the website allowing fot game formattings and coloring</li>
-    <li><strong>July 26:</strong> Server begins construction.</li>
-  </ul>
-</section>
+      <section class="card">
+        <h2>Community</h2>
+        <p>Chat with us, get updates, and share builds.</p>
+        <a class="btn" href="https://discord.gg/yourcode" target="_blank" rel="noopener">Join Discord</a>
+      </section>
+    </div>
 
-<section class="how-to">
-  <h2>How to Join Skythoria</h2>
-  <p>Address: <code>Skythoria.ooguy.com</code></p>
-  <div class="step">
-    <img src="assets/install_correct.png" alt="Install 1.21.6" />
-    <p>Step 1: Open the Minecraft launcher, go to the <strong>Installations</strong> tab, and create a new installation. Choose <code>1.21.6</code> from the version dropdown, then click <strong>Install</strong>.</p>
-  </div>
-  <div class="step">
-    <img src="assets/create_install.png" alt="Select 1.21.6" />
-    <p>Step 2: Be sure to select <strong>release 1.21.6</strong> from the version list before launching.</p>
-  </div>
-  <div class="step">
-    <img src="assets/small_version.png" alt="Correct version preview" />
-    <p>Version 1.21.6 should now appear correctly installed with the furnace icon.</p>
-  </div>
-  <div class="step">
-    <img src="assets/add_server.png" alt="Add Server Address" />
-    <p>Step 3: In Minecraft, go to <strong>Multiplayer → Add Server</strong>. Type <code>Skythoria.ooguy.com</code> into the address box, name it anything, and click <strong>Done</strong>.</p>
-  </div>
-  <h3>Requirements</h3>
-  <ul>
-    <li>Minecraft Java Edition 1.21.6</li>
-    <li>English Language</li>
-    <li>Java (not Bedrock)</li>
-  </ul>
-</section>
+    <div class="container" style="margin-top:16px">
+      <section class="card">
+        <h2>News & Updates</h2>
+        <div id="newsListHome"></div>
+        <div class="center" style="margin-top:12px">
+          <a class="btn" href="/news.html" data-root>View All News</a>
+        </div>
+      </section>
+    </div>
+  </main>
 
-<section>
-  <h2>Community</h2>
-  <a class="button" href="https://discord.gg/NCtM5fMY" target="_blank">Join our Discord</a>
-  <p style="margin-top:8px;">
-    Click above to join our Discord community.<br/>
-    Once inside, read <strong>#rules</strong> and react to gain full access.
-  </p>
-</section>
-
-<footer>
-  &copy; 2025 Skythoria
-</footer>
-
-<script>
-  const bannerFolder = 'assets/banners/';
-  const banners = [
-    'banner.png',
-    'banner1.png',
-    'banner2.png',
-    'banner3.png',
-    'banner4.png'
-  ];
-  let index = 0;
-  const bannerImg = document.getElementById('banner-rotator');
-
-  function fadeBanner() {
-    bannerImg.style.opacity = 0;
-    setTimeout(() => {
-      index = (index + 1) % banners.length;
-      bannerImg.src = bannerFolder + banners[index];
-      bannerImg.onload = () => {
-        bannerImg.style.opacity = 1;
-      };
-    }, 200);
-  }
-
-  setInterval(fadeBanner, 15000);
-</script>
-
+  <div data-include="/tools/shared/footer.html"></div>
+  <script src="/assets/js/include.js?v=1"></script>
+  <script src="/assets/js/site.js?v=1"></script>
 </body>
 </html>

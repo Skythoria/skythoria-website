@@ -1,0 +1,22 @@
+
+<section class="banner">
+  <div class="banner-rotator" data-banners='[
+    "/assets/img/banners/banner.png",
+    "/assets/img/banners/banner1.png",
+    "/assets/img/banners/banner2.png",
+    "/assets/img/banners/banner3.png",
+    "/assets/img/banners/banner4.png"
+  ]'></div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.querySelector('.banner-rotator'); if (!el) return;
+  const list = JSON.parse(el.getAttribute('data-banners')||'[]').filter(Boolean);
+  if (!list.length) return;
+  let i = 0;
+  const img = document.createElement('img');
+  img.alt = 'Skythoria Banner'; img.decoding='async'; img.src = list[0];
+  el.appendChild(img);
+  setInterval(() => { i=(i+1)%list.length; img.src=list[i]; }, 5000);
+});
+</script>
