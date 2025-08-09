@@ -1,3 +1,1 @@
-Upload banners to /assets/banners/ (or /assets/img/banners/). Optional: _list.json for explicit order.
-Server status from https://api.mcsrvstat.us/3/skythoria.ooguy.com (edit host in assets/js/site.js if needed)
-Discord invite + ticket webhook configured in assets/js/site.js
+Banners in /assets/banners. _list.json controls order. Server status uses api.mcsrvstat.us with traffic lights (green/online, red/offline, yellow/checking). Latest news auto-previews on the homepage.

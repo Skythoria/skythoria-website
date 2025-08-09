@@ -21,10 +21,9 @@ function wireDiscordLinks() {
   const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
 }
 
-/* Robust banner rotator */
+/* Banners */
 async function initBannerRotator() {
   const el = document.getElementById('banner-rotator'); if (!el) return;
-
   async function manifest() {
     try {
       const r = await fetch('/assets/banners/_list.json', {cache:'no-cache'});
@@ -34,7 +33,6 @@ async function initBannerRotator() {
       return arr.map(x => '/assets/banners/' + x);
     } catch { return null; }
   }
-
   function candidates() {
     const folders = ['/assets/banners','/assets/img/banners'];
     const prefixes = ['banner_','Banner_','banner','Banner'];
@@ -47,10 +45,7 @@ async function initBannerRotator() {
     }
     return list;
   }
-
   const list = (await manifest()) || candidates();
-
-  // Preload sequentially for reliability
   const loaded = [];
   async function preload(url) {
     return new Promise(res => {
@@ -61,52 +56,38 @@ async function initBannerRotator() {
     });
   }
   for (const u of list) {
-    // Stop after we have, say, 8 images to avoid infinite probing
     if (loaded.length >= 12) break;
     const r = await preload(u);
     if (r.ok) loaded.push(r.url);
   }
-
-  if (loaded.length === 0) {
-    const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph); return;
-  }
-
+  if (!loaded.length) { const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph); return; }
   const img = document.createElement('img');
   img.alt='Skythoria Banner'; img.decoding='async'; img.src = loaded[0];
   img.style.transition='opacity .4s ease'; el.appendChild(img);
-
-  // If only one, just show it
   if (loaded.length === 1) return;
-
   let i=0;
-  setInterval(()=>{
-    i=(i+1)%loaded.length; img.style.opacity='0.2';
+  setInterval(()=>{ i=(i+1)%loaded.length; img.style.opacity='0.2';
     setTimeout(()=>{ img.src=loaded[i]; img.style.opacity='1'; }, 180);
   }, 4500);
 }
 
-/* Server status */
+/* Server status with traffic lights */
 async function renderServerStatus() {
   const box = document.getElementById('serverStatus'); if (!box) return;
   const host = SKY.serverHost;
-  box.innerHTML = '<div class="help">Checking server status…</div>';
+  box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Checking status…</div></div>`;
+  async function get(url) { const r = await fetch(url, {cache:'no-cache'}); if (!r.ok) throw 0; return r.json(); }
   try {
-    const r = await fetch(`https://api.mcsrvstat.us/3/${host}`, {cache:'no-cache'});
-    const data = await r.json();
+    let data; try { data = await get(`https://api.mcsrvstat.us/3/${host}`); } catch { data = await get(`https://api.mcsrvstat.us/2/${host}`); }
     if (data && data.online) {
       const players = (data.players && data.players.online) || 0;
-      box.innerHTML = `
-        <div class="status">
-          <span class="dot on"></span>
-          <div><strong>Online</strong> — ${players} player${players===1?'':'s'} online</div>
-        </div>
-        ${data.motd && data.motd.clean ? `<div class="help" style="margin-top:6px">${data.motd.clean.join(' ')}</div>` : ''}
-      `;
+      box.innerHTML = `<div class="status"><span class="light green"></span><div><strong>Online</strong> — ${players} player${players===1?'':'s'} online</div></div>` +
+                      (data.motd && (data.motd.clean||data.motd) ? `<div class="help" style="margin-top:6px">${(data.motd.clean||[]).join ? (data.motd.clean||[]).join(' ') : data.motd}</div>` : '');
     } else {
-      box.innerHTML = `<div class="status"><span class="dot off"></span><div><strong>Offline</strong> — ${host}</div></div>`;
+      box.innerHTML = `<div class="status"><span class="light red"></span><div><strong>Offline</strong> — ${host}</div></div>`;
     }
-  } catch (e) {
-    box.innerHTML = `<div class="status"><span class="dot off"></span><div>Status unavailable</div></div>`;
+  } catch {
+    box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Status unavailable right now (may be caching). Try again in a minute.</div></div>`;
   }
 }
 
@@ -117,19 +98,10 @@ function initContactForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
-    const payload = {
-      username: "Skythoria Tickets",
-      embeds: [{
-        title: (data.subject||"Player Ticket"),
-        description: (data.message||"").trim(),
-        color: 0xe53935,
-        fields: [
-          { name: "Player", value: (data.ign||"unknown"), inline: true },
-          { name: "Reply Email", value: (data.email||"unknown"), inline: true }
-        ],
-        timestamp: new Date().toISOString(),
-        footer: { text: "Skythoria website ticket" }
-      }]
+    const payload = { username: "Skythoria Tickets",
+      embeds: [{ title: (data.subject||"Player Ticket"), description: (data.message||"").trim(), color: 0xe53935,
+        fields: [{ name: "Player", value: (data.ign||"unknown"), inline: true }, { name: "Reply Email", value: (data.email||"unknown"), inline: true }],
+        timestamp: new Date().toISOString(), footer: { text: "Skythoria website ticket" } }]
     };
     try {
       status.textContent = "Sending...";
@@ -140,10 +112,29 @@ function initContactForm() {
   });
 }
 
+/* Latest news (homepage) */
+async function renderLatestNews() {
+  const box = document.getElementById('latestNews'); if (!box) return;
+  try {
+    const r = await fetch('/assets/data/news.json', {cache:'no-cache'});
+    const posts = await r.json();
+    if (!Array.isArray(posts) || !posts.length) return;
+    const p = posts[0];
+    box.innerHTML = `<div class="card latest">
+      <div>
+        <div class="badge">${p.date}</div>
+        <h3 style="margin:.4rem 0 .3rem">${p.title}</h3>
+        <p style="margin:0">${p.body}</p>
+      </div>
+    </div>`;
+  } catch {}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   markActive();
   wireDiscordLinks();
   initBannerRotator();
   renderServerStatus();
+  renderLatestNews();
   initContactForm();
 });

@@ -4,7 +4,7 @@
   --text:#f6f8ff; --muted:#bac3d6; --border:#2b2f3a;
   --sky:#42a5f5; --thoria:#e53935;
   --orange:#ff9800; --green:#2ecc71; --link:#a8d3ff;
-  --ok:#2ecc71; --warn:#ffb300;
+  --ok:#2ecc71; --warn:#ffb300; --bad:#f44336;
   --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
@@ -16,7 +16,7 @@ html,body{margin:0;background:
   font:16px/1.55 system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 img{max-width:100%;display:block}
-a{color:var(--link);text-decoration:none;transition:opacity .15s ease, transform .15s ease}
+a{color:var(--link);text-decoration:none;transition:opacity .15s ease}
 a:hover{opacity:.95}
 code{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:4px 8px;border-radius:8px}
 .container{max-width:1200px;margin:0 auto;padding:0 20px}
@@ -25,8 +25,7 @@ hr{border:0;border-top:1px solid var(--border);margin:28px 0}
 .site-header{position:sticky;top:0;z-index:10;background:rgba(10,12,18,.6);backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
 .brand{font-weight:1000;letter-spacing:.6px;font-size:18px;color:#fff}
-.brand .sky{color:var(--sky)}
-.brand .thoria{color:var(--thoria)}
+.brand .sky{color:var(--sky)} .brand .thoria{color:var(--thoria)}
 .nav a{margin-left:12px;padding:10px 12px;border-radius:10px;color:#e9ebf3}
 .nav a.active,.nav a:hover{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));outline:1px solid rgba(255,255,255,.06)}
 
@@ -73,6 +72,11 @@ hr{border:0;border-top:1px solid var(--border);margin:28px 0}
 textarea{min-height:160px;resize:vertical}
 .help{color:var(--muted);font-size:12px}
 .center{text-align:center}
+
 .status{display:flex;align-items:center;gap:10px}
-.status .dot{width:10px;height:10px;border-radius:50%}
-.status .on{background:var(--ok)} .status .off{background:#f44336}
+.status .light{width:12px;height:12px;border-radius:50%;background:#666;box-shadow:0 0 0 2px rgba(255,255,255,.08) inset}
+.light.green{background:var(--ok)} .light.red{background:var(--bad)} .light.yellow{background:var(--warn)}
+
+.feat{display:flex;gap:12px;align-items:flex-start}
+.feat img{width:28px;height:28px;opacity:.92;margin-top:3px}
+.latest{display:flex;gap:14px;align-items:flex-start}
