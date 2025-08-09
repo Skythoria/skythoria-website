@@ -1,73 +1,71 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Skythoria — Home</title>
-  <link rel="stylesheet" href="/assets/css/site.css?v=PP2">
+  <link rel="stylesheet" href="/assets/css/site.css?v=PP3">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/"><span class="sky">Sky</span><span class="thoria">thoria</span></a>
-      <nav class="nav">
-        <a href="/">Home</a>
-        <a href="/features.html">Features</a>
-        <a href="/news.html">News</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/support.html">Support</a>
-        <a id="discordLink" href="https://discord.gg/fVjtFAJD" target="_blank" rel="noopener">Discord</a>
-      </nav>
+
+<header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/tools/">Tools</a>
+    <a href="#" data-discord>Discord</a>
+  </nav>
+</header>
+
+<section class="banner">
+  <div class="banner-rotator" id="banner-rotator"></div>
+  <div id="banner-overlay" class="banner-overlay"></div>
+</section>
+
+<section style="padding:1rem">
+  <div id="serverStatus"></div>
+</section>
+
+<section class="features">
+  <div class="card">
+    <svg fill="#2ecc71" viewBox="0 0 24 24"><path d="M12 2L15 8H9l3-6zm0 20l-3-6h6l-3 6zm-8-8l6-3v6l-6-3zm20 0l-6 3v-6l6 3z"/></svg>
+    <div>
+      <h3>Levels & Skills</h3>
+      <p>Progression and leveling system with skill unlocks.</p>
     </div>
-  </header>
-
-  <section class="banner">
-    <div class="banner-rotator" id="banner-rotator"></div>
-    <div id="banner-overlay" class="banner-overlay"></div>
-  </section>
-
-  <main class="main">
-    <div class="container center">
-      <div class="hero">
-        <div class="hero-addr"><span class="join">Join:</span><code>skythoria.ooguy.com</code></div>
-        <div class="hero-sub">Java 1.21.6 — Multiplayer → Add Server → paste the address above</div>
-        <div style="margin-top:16px">
-          <a class="btn primary" data-discord>Join Discord</a>
-          <a class="btn" href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
-        </div>
-      </div>
+  </div>
+  <div class="card">
+    <svg fill="#ff8a00" viewBox="0 0 24 24"><path d="M12 2l8 4v12l-8 4-8-4V6l8-4z"/></svg>
+    <div>
+      <h3>Custom Mobs</h3>
+      <p>Unique drops, rewards, and challenging bosses.</p>
     </div>
-
-    <div class="container" style="margin-top:16px" id="latestNews"></div>
-
-    <div class="container grid cols-3" style="margin-top:18px">
-      <section class="card">
-        <h2>Server Status</h2>
-        <div id="serverStatus" class="help">Checking server status…</div>
-      </section>
-      <section class="card">
-        <h2>What Makes Us Unique</h2>
-        <p>Hunting caves, fair economy, crates from gameplay, and community events.</p>
-        <a class="btn" href="/features.html">See Features</a>
-      </section>
-      <section class="card">
-        <h2>Need Help?</h2>
-        <p>Open a ticket—staff will reply via Discord.</p>
-        <a class="btn" href="/contact.html">Contact</a>
-      </section>
+  </div>
+  <div class="card">
+    <svg fill="#e53935" viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 012 2v2H3V5a2 2 0 012-2zm16 6v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9h18z"/></svg>
+    <div>
+      <h3>Emerald Slots</h3>
+      <p>Hunting caves with themed equipment sets.</p>
     </div>
-  </main>
+  </div>
+  <!-- add more cards as needed -->
+</section>
 
-  <footer class="site-footer" style="margin-top:24px">
-    <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-top:1px solid rgba(255,255,255,.06)">
-      <div style="font-weight:800;letter-spacing:.3px">© Skythoria</div>
-      <div class="links" style="display:flex;gap:12px;flex-wrap:wrap">
-        <a href="/">Home</a>
-        <a href="/support.html">Support</a>
-        <a href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
-      </div>
-    </div>
-  </footer>
+<section style="padding:1rem">
+  <h2>Contact Us</h2>
+  <form id="contactForm">
+    <input name="ign" placeholder="Minecraft Name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="subject" placeholder="Subject">
+    <textarea name="message" placeholder="Your message" rows="4" required></textarea>
+    <button type="submit">Send</button>
+    <div id="contactStatus"></div>
+  </form>
+</section>
 
-  <script src="/assets/js/site.js?v=PP2"></script>
+<footer>
+  &copy; 2025 Skythoria. All rights reserved.
+</footer>
+
+<script src="/assets/js/site.js?v=PP3"></script>
 </body>
 </html>
