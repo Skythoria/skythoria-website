@@ -1,91 +1,14 @@
-
 /* Site config (update in one place) */
-const SKY = {
-  discordInvite: "https://discord.gg/fVjtFAJD",
-  youtubeUrl: "https://www.youtube.com/@Skythoria",
-  contact: { webhook: "https://discord.com/api/webhooks/1403695213163053166/jOQRB2O-RQdwJmzhZLeeePRMmppkeZxS-xv7M4mGpSB_g0KLPamhxS_pkkNnv5VTilSh" },   // <-- Paste a Discord webhook URL here to enable tickets
-  storeUrl: ""
-};
-
-/* Render news from /assets/data/news.json */
-async function renderNewsList(sel, limit) {
-  const el = document.querySelector(sel); if (!el) return;
-  try {
-    const res = await fetch('/assets/data/news.json', {cache:'no-cache'});
-    const items = await res.json();
-    const posts = (limit? items.slice(0, limit) : items);
-    el.innerHTML = posts.map(p => `
+const SKY={discordInvite:"https://discord.gg/fVjtFAJD",youtubeUrl:"https://www.youtube.com/@Skythoria",contact:{webhook:"https://discord.com/api/webhooks/1403695213163053166/jOQRB2O-RQdwJmzhZLeeePRMmppkeZxS-xv7M4mGpSB_g0KLPamhxS_pkkNnv5VTilSh"},storeUrl:""};
+async function renderNewsList(e,t){const n=document.querySelector(e);if(!n)return;try{const e=await fetch("/assets/data/news.json",{cache:"no-cache"}),o=await e.json(),a=t?o.slice(0,t):o;n.innerHTML=a.map((e=>`
       <article class="card">
         <div class="post">
-          ${p.image ? `<img src="${p.image}" alt="">` : ``}
+          ${e.image?`<img src="${e.image}" alt="">`:""}
           <div>
-            <h3 style="margin:0">${p.title}</h3>
-            <div class="badge">${p.date}</div>
-            <p>${p.body}</p>
+            <h3 style="margin:0">${e.title}</h3>
+            <div class="badge">${e.date}</div>
+            <p>${e.body}</p>
           </div>
         </div>
       </article>
-    `).join('');
-  } catch {
-    el.innerHTML = `<div class="notice">No news yet.</div>`;
-  }
-}
-
-/* CONTACT: Discord webhook only (no email fallback, to avoid exposing address) */
-function initContactForm() {
-  const form = document.getElementById('contactForm'); if (!form) return;
-  const status = document.getElementById('contactStatus');
-  const configured = !!(SKY.contact && SKY.contact.webhook);
-
-  if (!configured) {
-    status.innerHTML = "Ticket system not configured. (Admin: paste a Discord webhook in <code>assets/js/site.js</code>.)";
-    form.querySelector("button[type='submit']").disabled = true;
-    return;
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    const subject = data.subject?.trim() || "Player Ticket";
-    const email = data.email?.trim() || "unknown";
-    const ign = data.ign?.trim() || "unknown";
-    const msg = data.message?.trim() || "";
-    if (!msg) { status.textContent = "Message cannot be empty."; return; }
-
-    status.textContent = "Sending...";
-    const payload = {
-      username: "Skythoria Tickets",
-      embeds: [{
-        title: subject,
-        description: msg,
-        color: 0xc62828,
-        fields: [
-          { name: "Player", value: ign, inline: true },
-          { name: "Reply Email", value: email, inline: true }
-        ],
-        timestamp: new Date().toISOString(),
-        footer: { text: "Skythoria website ticket" }
-      }]
-    };
-    try {
-      const res = await fetch(SKY.contact.webhook, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw 0;
-      form.reset();
-      status.innerHTML = `<span class="badge" style="background:#173f2b;border-color:#173f2b">Ticket sent to staff Discord</span>`;
-    } catch {
-      status.textContent = "Failed to send. Try again later.";
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  renderNewsList('#newsListHome', 3);
-  renderNewsList('#newsListFull');
-  initContactForm();
-  const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
-  const d2 = document.getElementById('discordBtn');  if (d2) d2.href = SKY.discordInvite;
-});
+    `)).join("")}catch{n.innerHTML='<div class="notice">No news yet.</div>'}}function initContactForm(){const e=document.getElementById("contactForm");if(!e)return;const t=document.getElementById("contactStatus"),n=!!(SKY.contact&&SKY.contact.webhook);if(!n)return t.innerHTML='Ticket system not configured. (Admin: paste a Discord webhook in <code>assets/js/site.js</code>.)',void e.querySelector('button[type="submit"]').disabled=!0;e.addEventListener("submit",(async n=>{n.preventDefault();const o=Object.fromEntries(new FormData(e).entries()),a=o.subject?.trim()||"Player Ticket",c=o.email?.trim()||"unknown",i=o.ign?.trim()||"unknown",s=o.message?.trim()||"";if(!s)return void(t.textContent="Message cannot be empty.");t.textContent="Sending...";const r={username:"Skythoria Tickets",embeds:[{title:a,description:s,color:12939272,fields:[{name:"Player",value:i,inline:!0},{name:"Reply Email",value:c,inline:!0}],timestamp:(new Date).toISOString(),footer:{text:"Skythoria website ticket"}}]};try{const n=await fetch(SKY.contact.webhook,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)});if(!n.ok)throw 0;e.reset(),t.innerHTML='<span class="badge" style="background:#173f2b;border-color:#173f2b">Ticket sent to staff Discord</span>'}catch{t.textContent="Failed to send. Try again later."}}))}function wireDiscordLinks(){document.querySelectorAll("a[data-discord], button[data-discord]").forEach((e=>{"a"===e.tagName.toLowerCase()?(e.href=SKY.discordInvite,e.target="_blank",e.rel="noopener"):e.addEventListener("click",(()=>window.open(SKY.discordInvite,"_blank","noopener"))))});const e=document.getElementById("discordLink");e&&(e.href=SKY.discordInvite);const t=document.getElementById("discordBtn");t&&(t.href=SKY.discordInvite)}function installImageFallbacks(){document.querySelectorAll("img[data-img-candidates]").forEach((e=>{const t=(()=>{try{return JSON.parse(e.getAttribute("data-img-candidates")||"[]")}catch{return[]}})();if(!t.length)return;let n=0;const o=()=>{if(n>=t.length)return;const a=new Image,c=t[n++];a.onload=()=>{e.src=c},a.onerror=o,a.src=c+(c.includes("?")?"&":"?")+"v="+Date.now()};o()}))}document.addEventListener("DOMContentLoaded",(()=>{renderNewsList("#newsListHome",3),renderNewsList("#newsListFull"),initContactForm(),wireDiscordLinks(),installImageFallbacks()}));

@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,7 +7,6 @@
 </head>
 <body>
   <div data-include="/tools/shared/header.html"></div>
-
   <main class="main">
     <div class="container">
       <h1>How to Join</h1>
@@ -20,16 +18,25 @@
           <li><strong>First Spawn:</strong> Follow signs to get started.</li>
         </ol>
       </div>
-
       <div class="grid cols-2" style="margin-top:16px">
         <div class="card">
           <h2>Set Client Version</h2>
-          <img src="/assets/img/howto/client-version.png" alt="Set client version">
+          <img data-img-candidates='[
+              "/assets/img/howto/client-version.png",
+              "/assets/howto/client-version.png",
+              "/assets/client-version.png",
+              "/assets/ClientVersion.png"
+            ]' alt="Set client version">
           <p class="help">Choose 1.21.6 in your launcher.</p>
         </div>
         <div class="card">
           <h2>Add the Server</h2>
-          <img src="/assets/img/howto/add-server.png" alt="Add server">
+          <img data-img-candidates='[
+              "/assets/img/howto/add-server.png",
+              "/assets/howto/add-server.png",
+              "/assets/add-server.png",
+              "/assets/AddServer.png"
+            ]' alt="Add server">
           <div class="kv">
             <div class="k">Server Address</div><div class="v"><code>skythoria.ooguy.com</code></div>
           </div>
@@ -37,7 +44,6 @@
       </div>
     </div>
   </main>
-
   <div data-include="/tools/shared/footer.html"></div>
   <script src="/assets/js/include.js?v=1"></script>
   <script src="/assets/js/site.js?v=1"></script>
