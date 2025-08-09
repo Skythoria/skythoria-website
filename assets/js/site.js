@@ -1,4 +1,4 @@
-
+/* Skythoria website JS — PP2 */
 const SKY = {
   discordInvite: "https://discord.gg/fVjtFAJD",
   youtubeUrl: "https://www.youtube.com/@Skythoria",
@@ -6,6 +6,9 @@ const SKY = {
   serverHost: "skythoria.ooguy.com"
 };
 
+let SKY_STATUS = "checking"; // "online" | "offline" | "checking"
+
+/* ---------- Nav / Links ---------- */
 function markActive() {
   const here = location.pathname.replace(/\/+$/,'') || '/';
   document.querySelectorAll('nav a').forEach(a => {
@@ -21,87 +24,111 @@ function wireDiscordLinks() {
   const d1 = document.getElementById('discordLink'); if (d1) d1.href = SKY.discordInvite;
 }
 
-/* Banners */
+/* ---------- Banner: fixed filenames, instant paint, non-blocking preload ---------- */
+const SKY_BANNERS = ["banner_0.png","banner_1.png","banner_2.png","banner_3.png","banner_4.png"];
+
 async function initBannerRotator() {
-  const el = document.getElementById('banner-rotator'); if (!el) return;
-  async function manifest() {
-    try {
-      const r = await fetch('/assets/banners/_list.json', {cache:'no-cache'});
-      if (!r.ok) return null;
-      const arr = await r.json();
-      if (!Array.isArray(arr) || !arr.length) return null;
-      return arr.map(x => '/assets/banners/' + x);
-    } catch { return null; }
+  const wrap = document.getElementById('banner-rotator'); if (!wrap) return;
+
+  // 1) Paint first image immediately
+  const img = document.createElement('img');
+  img.alt = 'Skythoria Banner';
+  img.decoding = 'async';
+  img.style.transition = 'opacity .4s ease';
+  img.src = `/assets/banners/${SKY_BANNERS[0]}?v=${Date.now()}`; // instant first frame
+  wrap.appendChild(img);
+
+  // 2) Choose which set to use by status (edit these indices to taste)
+  const sets = {
+    online:   [0,1,2],   // rotate these when server is online
+    offline:  [3],       // show just one when offline (static)
+    checking: [0,4]      // while checking, bounce between two
+  };
+  function pickSet() {
+    const idxs = sets[SKY_STATUS] || [0,1,2,3,4];
+    return idxs.filter(i => i>=0 && i<SKY_BANNERS.length);
   }
-  function candidates() {
-    const folders = ['/assets/banners','/assets/img/banners'];
-    const prefixes = ['banner_','Banner_','banner','Banner'];
-    const generics = ['banner','Banner','header','Header','hero','Hero','main','Main'];
-    const exts = ['.webp','.png','.jpg','.jpeg','.WEBP','.PNG','.JPG','.JPEG'];
-    const list = [];
-    for (const f of folders) {
-      for (let i=0;i<=80;i++) for (const p of prefixes) for (const e of exts) list.push(`${f}/${p}${i}${e}`);
-      for (const g of generics) for (const e of exts) list.push(`${f}/${g}${e}`);
-    }
-    return list;
-  }
-  const list = (await manifest()) || candidates();
-  const loaded = [];
-  async function preload(url) {
+
+  // 3) Preload chosen images, then start rotation once we have 2+
+  function preload(name) {
     return new Promise(res => {
       const t = new Image();
-      t.onload = () => res({ok:true, url});
-      t.onerror = () => res({ok:false, url});
-      t.src = url + (url.includes('?')?'&':'?') + 'v=' + Date.now();
+      t.onload  = () => res({ok:true,  src: `/assets/banners/${name}`});
+      t.onerror = () => res({ok:false, src: `/assets/banners/${name}`});
+      t.src = `/assets/banners/${name}?v=${Date.now()}`;
     });
   }
-  for (const u of list) {
-    if (loaded.length >= 12) break;
-    const r = await preload(u);
-    if (r.ok) loaded.push(r.url);
+
+  async function startRotation() {
+    const use = pickSet().map(i => SKY_BANNERS[i]);
+    const loaded = [];
+    for (const name of use) {
+      const r = await preload(name);
+      if (r.ok) loaded.push(r.src);
+      if (loaded.length >= 6) break; // safety cap
+    }
+    if (loaded.length <= 1) return; // keep static if only 1 ready
+
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % loaded.length;
+      img.style.opacity = '0.2';
+      setTimeout(() => {
+        img.src = loaded[i] + `?t=${Date.now()}`; // bust any edge cache
+        img.style.opacity = '1';
+      }, 180);
+    }, 6000);
   }
-  if (!loaded.length) { const ph=document.createElement('div'); ph.style.height='200px'; el.appendChild(ph); return; }
-  const img = document.createElement('img');
-  img.alt='Skythoria Banner'; img.decoding='async'; img.src = loaded[0];
-  img.style.transition='opacity .4s ease'; el.appendChild(img);
-  if (loaded.length === 1) return;
-  let i=0;
-  setInterval(()=>{ i=(i+1)%loaded.length; img.style.opacity='0.2';
-    setTimeout(()=>{ img.src=loaded[i]; img.style.opacity='1'; }, 180);
-  }, 4500);
+
+  startRotation();
 }
 
-/* Server status with traffic lights */
+/* ---------- Server status (traffic lights) + MOTD overlay ---------- */
 async function renderServerStatus() {
   const box = document.getElementById('serverStatus'); if (!box) return;
   const host = SKY.serverHost;
   box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Checking status…</div></div>`;
-  async function get(url) { const r = await fetch(url, {cache:'no-cache'}); if (!r.ok) throw 0; return r.json(); }
+  async function get(u){ const r=await fetch(u,{cache:'no-cache'}); if(!r.ok) throw 0; return r.json(); }
   try {
     let data; try { data = await get(`https://api.mcsrvstat.us/3/${host}`); } catch { data = await get(`https://api.mcsrvstat.us/2/${host}`); }
     if (data && data.online) {
+      SKY_STATUS = "online";
       const players = (data.players && data.players.online) || 0;
-      box.innerHTML = `<div class="status"><span class="light green"></span><div><strong>Online</strong> — ${players} player${players===1?'':'s'} online</div></div>` +
-                      (data.motd && (data.motd.clean||data.motd) ? `<div class="help" style="margin-top:6px">${(data.motd.clean||[]).join ? (data.motd.clean||[]).join(' ') : data.motd}</div>` : '');
+      box.innerHTML = `<div class="status"><span class="light green"></span><div><strong>Online</strong> — ${players} player${players===1?'':'s'} online</div></div>`;
+      // MOTD overlay (if present)
+      const motd = (data.motd && (data.motd.clean||data.motd)) ? ((data.motd.clean||[]).join ? (data.motd.clean||[]).join(' ') : data.motd) : '';
+      const ov = document.getElementById('banner-overlay');
+      if (ov) ov.textContent = motd || '';
     } else {
+      SKY_STATUS = "offline";
       box.innerHTML = `<div class="status"><span class="light red"></span><div><strong>Offline</strong> — ${host}</div></div>`;
     }
   } catch {
-    box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Status unavailable right now (may be caching). Try again in a minute.</div></div>`;
+    SKY_STATUS = "checking";
+    box.innerHTML = `<div class="status"><span class="light yellow"></span><div>Status unavailable (cache). Try again soon.</div></div>`;
   }
 }
 
-/* Contact */
+/* ---------- Contact (Discord webhook ticket) ---------- */
 function initContactForm() {
   const form = document.getElementById('contactForm'); if (!form) return;
   const status = document.getElementById('contactStatus');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
-    const payload = { username: "Skythoria Tickets",
-      embeds: [{ title: (data.subject||"Player Ticket"), description: (data.message||"").trim(), color: 0xe53935,
-        fields: [{ name: "Player", value: (data.ign||"unknown"), inline: true }, { name: "Reply Email", value: (data.email||"unknown"), inline: true }],
-        timestamp: new Date().toISOString(), footer: { text: "Skythoria website ticket" } }]
+    const payload = {
+      username: "Skythoria Tickets",
+      embeds: [{
+        title: (data.subject||"Player Ticket"),
+        description: (data.message||"").trim(),
+        color: 0xe53935,
+        fields: [
+          { name: "Player", value: (data.ign||"unknown"), inline: true },
+          { name: "Reply Email", value: (data.email||"unknown"), inline: true }
+        ],
+        timestamp: new Date().toISOString(),
+        footer: { text: "Skythoria website ticket" }
+      }]
     };
     try {
       status.textContent = "Sending...";
@@ -112,7 +139,7 @@ function initContactForm() {
   });
 }
 
-/* Latest news (homepage) */
+/* ---------- Latest News (homepage preview) ---------- */
 async function renderLatestNews() {
   const box = document.getElementById('latestNews'); if (!box) return;
   try {
@@ -130,11 +157,12 @@ async function renderLatestNews() {
   } catch {}
 }
 
+/* ---------- Boot ---------- */
 document.addEventListener('DOMContentLoaded', () => {
   markActive();
   wireDiscordLinks();
-  initBannerRotator();
-  renderServerStatus();
+  renderServerStatus();     // sets SKY_STATUS
+  initBannerRotator();      // reads SKY_STATUS to pick images
   renderLatestNews();
   initContactForm();
 });
