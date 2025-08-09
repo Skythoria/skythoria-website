@@ -73,7 +73,7 @@ function initContactForm() {
       embeds: [{
         title: (data.subject||"Player Ticket"),
         description: (data.message||"").trim(),
-        color: 0xc62828,
+        color: 0xe53935,
         fields: [
           { name: "Player", value: (data.ign||"unknown"), inline: true },
           { name: "Reply Email", value: (data.email||"unknown"), inline: true }
