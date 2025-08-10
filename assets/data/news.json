@@ -1,7 +1,7 @@
 [
   {
-    "date": "2025-08-09",
-    "title": "Website Refresh",
-    "body": "Status-based banner, MOTD overlay, color-coded features, and cleaner navigation."
+    "date": "2025-08-10",
+    "title": "Static Banner Update",
+    "body": "Removed server status and rotation. Using a single banner for faster loads."
   }
 ]
