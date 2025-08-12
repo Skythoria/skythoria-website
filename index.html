@@ -1,9 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Skythoria — Home</title>
+  <link rel="icon" type="image/png" href="/assets/images/logo1.png">
   <link rel="stylesheet" href="/assets/css/site.css?v=SB2">
+  <style>
+    /* Highlight Store button */
+    .nav a.store-btn {
+      background-color: #b30000;
+      color: white !important;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+    .nav a.store-btn:hover {
+      background-color: #ff1a1a;
+    }
+  </style>
 </head>
 <body>
   
@@ -17,18 +33,18 @@
       <a href="/contact.html">Contact</a>
       <a href="/support.html">Support</a>
       <a id="discordLink" href="https://discord.gg/fVjtFAJD" target="_blank" rel="noopener">Discord</a>
+      <a class="store-btn" href="https://skythoria.craftingstore.net" target="_blank" rel="noopener">Store</a>
     </nav>
   </div>
 </header>
 
-  
 <section class="banner">
   <div class="banner-rotator" id="banner-rotator">
     <img src="/assets/banners/banner_0.png" alt="Skythoria Banner">
   </div>
 </section>
 
-  <main class="main">
+<main class="main">
   <div class="container center">
     <div class="hero">
       <div class="hero-addr"><span class="join">Join:</span><code>skythoria.ooguy.com</code></div>
@@ -68,10 +84,11 @@
       <a href="/">Home</a>
       <a href="/support.html">Support</a>
       <a href="https://www.youtube.com/@Skythoria" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://skythoria.craftingstore.net" target="_blank" rel="noopener">Store</a>
     </div>
   </div>
 </footer>
 
-  <script src="/assets/js/site.js?v=SB2"></script>
+<script src="/assets/js/site.js?v=SB2"></script>
 </body>
 </html>
